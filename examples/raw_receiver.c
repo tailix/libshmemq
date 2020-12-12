@@ -29,57 +29,39 @@ int main()
 
     printf("Open shared memory objects.\n");
 
-    int indicator_shm_id = shm_open(
-        "/indicator",
-        O_CREAT | O_EXCL | O_RDWR,
-        S_IRUSR | S_IWUSR
-    );
-
     int buffer1_shm_id = shm_open(
         "/buffer1",
         O_CREAT | O_EXCL | O_RDWR,
         S_IRUSR | S_IWUSR
     );
 
-    assert(indicator_shm_id != -1);
-    assert(buffer1_shm_id   != -1);
+    assert(buffer1_shm_id != -1);
 
     printf("Truncate shared memory objects.\n");
 
-    assert(ftruncate(indicator_shm_id, sizeof(struct Indicator)) == 0);
-    assert(ftruncate(buffer1_shm_id,   BUFFER1_SIZE)             == 0);
+    assert(ftruncate(buffer1_shm_id, BUFFER1_SIZE) == 0);
 
     printf("Create memory mappings.\n");
 
-    struct Indicator *const indicator = mmap(
-        NULL,
-        sizeof(*indicator),
-        PROT_READ | PROT_WRITE,
-        MAP_SHARED,
-        indicator_shm_id,
-        0
-    );
-
-    void *const buffer1 = mmap(
+    struct Queue *const queue = mmap(
         NULL,
         BUFFER1_SIZE,
-        PROT_READ,
+        PROT_READ | PROT_WRITE,
         MAP_SHARED,
         buffer1_shm_id,
         0
     );
 
-    assert(indicator != MAP_FAILED);
-    assert(buffer1   != MAP_FAILED);
+    assert(queue != MAP_FAILED);
 
     printf("Initialize queues.\n");
 
-    indicator->buffer1_offset  = 0;
+    queue->offset = 0;
 
     printf("Main loop.\n");
 
     while (running) {
-        const struct Message *const message = buffer1 + indicator->buffer1_offset;
+        const struct Message *const message = (struct Message*)queue->data + queue->offset;
 
         if (message->magic != BUFFER1_MAGIC) {
             printf("No messages.\n");
@@ -87,18 +69,18 @@ int main()
             continue;
         }
 
-        if (message->size > BUFFER1_SIZE) {
+        if (message->size > BUFFER1_SIZE - sizeof(struct Queue)) {
             printf("Message too big.\n");
             break;
         }
 
-        if (message->size > BUFFER1_SIZE - indicator->buffer1_offset) {
+        if (message->size > BUFFER1_SIZE - sizeof(struct Queue) - queue->offset) {
             printf("Buffer return.\n");
-            indicator->buffer1_offset = 0;
+            queue->offset = 0;
             continue;
         }
 
-        indicator->buffer1_offset += message->size;
+        queue->offset += message->size;
 
         switch (message->type) {
         case FINISH:
@@ -119,13 +101,11 @@ int main()
 
     printf("Destroy memory mappings.\n");
 
-    assert(munmap(indicator, sizeof(*indicator)) == 0);
-    assert(munmap(buffer1,   BUFFER1_SIZE)       == 0);
+    assert(munmap(queue, BUFFER1_SIZE) == 0);
 
     printf("Unlink shared memory objects.\n");
 
-    assert(shm_unlink("/indicator") == 0);
-    assert(shm_unlink("/buffer1")   == 0);
+    assert(shm_unlink("/buffer1") == 0);
 
     return 0;
 }

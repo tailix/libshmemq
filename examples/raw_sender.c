@@ -20,33 +20,17 @@ int main()
 {
     printf("Open shared memory objects.\n");
 
-    int indicator_shm_id = shm_open(
-        "/indicator",
-        O_RDONLY,
-        S_IRUSR | S_IWUSR
-    );
-
     int buffer1_shm_id = shm_open(
         "/buffer1",
         O_RDWR,
         S_IRUSR | S_IWUSR
     );
 
-    assert(indicator_shm_id != -1);
-    assert(buffer1_shm_id   != -1);
+    assert(buffer1_shm_id != -1);
 
     printf("Create memory mappings.\n");
 
-    struct Indicator *const indicator = mmap(
-        NULL,
-        sizeof(*indicator),
-        PROT_READ,
-        MAP_SHARED,
-        indicator_shm_id,
-        0
-    );
-
-    void *const buffer1 = mmap(
+    struct Queue *const queue = mmap(
         NULL,
         BUFFER1_SIZE,
         PROT_READ | PROT_WRITE,
@@ -55,24 +39,23 @@ int main()
         0
     );
 
-    assert(indicator != MAP_FAILED);
-    assert(buffer1   != MAP_FAILED);
+    assert(queue != MAP_FAILED);
 
     printf("Initialize queues.\n");
 
-    size_t buffer1_offset = indicator->buffer1_offset;
+    size_t buffer1_offset = queue->offset;
 
     for (;;) {
-        const struct Message *const message = buffer1 + buffer1_offset;
+        const struct Message *const message = (struct Message*)queue->data + buffer1_offset;
 
         if (message->magic != BUFFER1_MAGIC) break;
 
-        if (message->size > BUFFER1_SIZE) {
+        if (message->size > BUFFER1_SIZE - sizeof(struct Queue)) {
             printf("Message too big.\n");
             goto finalize;
         }
 
-        if (message->size > BUFFER1_SIZE - buffer1_offset) {
+        if (message->size > BUFFER1_SIZE - sizeof(struct Queue) - buffer1_offset) {
             printf("Buffer return.\n");
             buffer1_offset = 0;
             continue;
@@ -101,7 +84,7 @@ int main()
             break;
         }
 
-        struct Message *message = buffer1 + buffer1_offset;
+        struct Message *message = (struct Message*)queue->data + buffer1_offset;
 
         switch (chr) {
         case 'f':
@@ -141,13 +124,11 @@ int main()
 finalize:
     printf("Destroy memory mappings.\n");
 
-    assert(munmap(indicator, sizeof(*indicator)) == 0);
-    assert(munmap(buffer1,   BUFFER1_SIZE)       == 0);
+    assert(munmap(queue, BUFFER1_SIZE) == 0);
 
     printf("Close shared memory objects.\n");
 
-    assert(close(indicator_shm_id) == 0);
-    assert(close(buffer1_shm_id)   == 0);
+    assert(close(buffer1_shm_id) == 0);
 
     return 0;
 }

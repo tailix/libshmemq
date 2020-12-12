@@ -10,8 +10,10 @@ extern "C" {
 static const size_t BUFFER1_SIZE  = 200;
 static const long   BUFFER1_MAGIC = 0xCAFEBABE;
 
-struct Indicator {
-    size_t buffer1_offset;
+struct Queue {
+    size_t offset;
+
+    unsigned char data[];
 };
 
 enum MessageType {
