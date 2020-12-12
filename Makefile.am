@@ -1,0 +1,26 @@
+SUBDIRS = include
+
+AM_CFLAGS = \
+	-std=c99 \
+	-Wall \
+	-Wextra \
+	-I$(top_srcdir)/include
+
+lib_LIBRARIES = libshmemq.a
+
+TESTS = \
+	examples/dummy \
+	tests/test_dummy
+
+noinst_PROGRAMS = $(TESTS)
+
+libshmemq_a_SOURCES = \
+	src/dummy.c
+
+examples_dummy_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	examples/dummy.c
+
+tests_test_dummy_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	tests/test_dummy.c
