@@ -43,7 +43,7 @@ int main()
 
     printf("Initialize queues.\n");
 
-    size_t buffer1_offset = queue->offset;
+    size_t buffer1_offset = queue->read_offset;
 
     for (;;) {
         const struct Message *const message = (struct Message*)queue->data + buffer1_offset;

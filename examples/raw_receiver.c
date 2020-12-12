@@ -56,12 +56,12 @@ int main()
 
     printf("Initialize queues.\n");
 
-    queue->offset = 0;
+    queue->read_offset = 0;
 
     printf("Main loop.\n");
 
     while (running) {
-        const struct Message *const message = (struct Message*)queue->data + queue->offset;
+        const struct Message *const message = (struct Message*)queue->data + queue->read_offset;
 
         if (message->magic != BUFFER1_MAGIC) {
             printf("No messages.\n");
@@ -74,13 +74,13 @@ int main()
             break;
         }
 
-        if (message->size > BUFFER1_SIZE - sizeof(struct Queue) - queue->offset) {
+        if (message->size > BUFFER1_SIZE - sizeof(struct Queue) - queue->read_offset) {
             printf("Buffer return.\n");
-            queue->offset = 0;
+            queue->read_offset = 0;
             continue;
         }
 
-        queue->offset += message->size;
+        queue->read_offset += message->size;
 
         switch (message->type) {
         case FINISH:
