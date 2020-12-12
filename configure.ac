@@ -24,6 +24,13 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_RANLIB
 
+AC_TYPE_SIZE_T
+
+AC_FUNC_MMAP
+
+AC_CHECK_FUNCS([ftruncate])
+AC_CHECK_FUNCS([munmap])
+
 AC_SEARCH_LIBS([shm_open], [rt])
 AC_SEARCH_LIBS([shm_unlink], [rt])
 
