@@ -24,4 +24,7 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_RANLIB
 
+AC_SEARCH_LIBS([shm_open], [rt])
+AC_SEARCH_LIBS([shm_unlink], [rt])
+
 AC_OUTPUT

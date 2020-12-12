@@ -12,7 +12,10 @@ TESTS = \
 	examples/dummy \
 	tests/test_dummy
 
-noinst_PROGRAMS = $(TESTS)
+noinst_PROGRAMS = \
+	$(TESTS) \
+	examples/raw_receiver \
+	examples/raw_sender
 
 libshmemq_a_SOURCES = \
 	src/dummy.c
@@ -20,6 +23,14 @@ libshmemq_a_SOURCES = \
 examples_dummy_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	examples/dummy.c
+
+examples_raw_receiver_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	examples/raw_receiver.c
+
+examples_raw_sender_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	examples/raw_sender.c
 
 tests_test_dummy_SOURCES = \
 	$(libshmemq_a_SOURCES) \
