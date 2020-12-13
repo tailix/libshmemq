@@ -28,6 +28,8 @@ AC_TYPE_SIZE_T
 
 AC_FUNC_MMAP
 
+AC_CHECK_HEADERS([stddef.h])
+
 AC_CHECK_FUNCS([ftruncate])
 AC_CHECK_FUNCS([munmap])
 
