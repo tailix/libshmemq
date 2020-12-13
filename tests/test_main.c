@@ -8,10 +8,13 @@ static const char name[] = "/foobar";
 
 int main()
 {
+    enum Shmemq_Error error;
+
     struct Shmemq consumer_shmemq;
     memset(&consumer_shmemq, 0, sizeof(consumer_shmemq));
 
-    assert(shmemq_init(&consumer_shmemq, name, true) == SHMEMQ_ERROR_NONE);
+    shmemq_init(&consumer_shmemq, name, true, &error);
+    assert(error == SHMEMQ_ERROR_NONE);
 
     assert(strcmp(consumer_shmemq.name, name) == 0);
     assert(consumer_shmemq.is_consumer == true);
@@ -24,7 +27,6 @@ int main()
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 0);
 
-    enum Shmemq_Error error;
     const Shmemq producer_shmemq = shmemq_new(name, false, &error);
 
     assert(producer_shmemq != NULL);
@@ -46,8 +48,11 @@ int main()
     consumer_shmemq.buffer->header.is_ready = true;
     assert(producer_shmemq->buffer->header.is_ready == true);
 
-    assert(shmemq_finish(&consumer_shmemq) == SHMEMQ_ERROR_NONE);
-    assert(shmemq_delete(producer_shmemq) == SHMEMQ_ERROR_NONE);
+    shmemq_finish(&consumer_shmemq, &error);
+    assert(error == SHMEMQ_ERROR_NONE);
+
+    shmemq_delete(producer_shmemq, &error);
+    assert(error == SHMEMQ_ERROR_NONE);
 
     return 0;
 }

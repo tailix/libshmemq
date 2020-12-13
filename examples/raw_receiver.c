@@ -86,7 +86,7 @@ int main()
 
     printf("Destroy queue.\n");
 
-    shmemq_delete(shmemq);
+    shmemq_delete(shmemq, NULL);
 
     return 0;
 }

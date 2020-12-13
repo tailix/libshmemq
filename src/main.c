@@ -9,30 +9,38 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-enum Shmemq_Error shmemq_delete(const Shmemq shmemq)
+void shmemq_delete(const Shmemq shmemq, enum Shmemq_Error *const error_ptr)
 {
-    const enum Shmemq_Error error = shmemq_finish(shmemq);
+    shmemq_finish(shmemq, error_ptr);
     free(shmemq);
-    return error;
 }
 
-enum Shmemq_Error shmemq_finish(const Shmemq shmemq)
+void shmemq_finish(const Shmemq shmemq, enum Shmemq_Error *const error_ptr)
 {
     const size_t size =
         sizeof(struct Shmemq_BufferHeader) +
         SHMEMQ_FRAME_SIZE * shmemq->buffer->header.frames_count;
 
-    if (munmap(shmemq->buffer, size) != 0) return SHMEMQ_ERROR_FAILED_MUNMAP;
+    if (munmap(shmemq->buffer, size) != 0) {
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_MUNMAP;
+        return;
+    }
+
     shmemq->buffer = NULL;
 
-    if (close(shmemq->shm_id) != 0) return SHMEMQ_ERROR_FAILED_CLOSE;
+    if (close(shmemq->shm_id) != 0) {
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_CLOSE;
+        return;
+    }
+
     shmemq->shm_id = -1;
 
     if (shmemq->is_consumer && shm_unlink(shmemq->name) != 0) {
-        return SHMEMQ_ERROR_FAILED_SHM_UNLINK;
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_SHM_UNLINK;
+        return;
     }
 
-    return SHMEMQ_ERROR_NONE;
+    if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
 }
 
 Shmemq shmemq_new(
@@ -47,7 +55,8 @@ Shmemq shmemq_new(
         return NULL;
     }
 
-    const enum Shmemq_Error error = shmemq_init(shmemq, name, is_consumer);
+    enum Shmemq_Error error;
+    shmemq_init(shmemq, name, is_consumer, &error);
 
     if (error_ptr) *error_ptr = error;
 
@@ -56,20 +65,26 @@ Shmemq shmemq_new(
         return NULL;
     }
 
+    if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
     return shmemq;
 }
 
-enum Shmemq_Error shmemq_init(
+void shmemq_init(
     const Shmemq shmemq,
     const char *const name,
-    const bool is_consumer
+    const bool is_consumer,
+    enum Shmemq_Error *const error_ptr
 ) {
     if (strlen(name) > SHMEMQ_NAME_SLEN_MAX || name[0] != '/') {
-        return SHMEMQ_ERROR_INVALID_NAME;
+        *error_ptr = SHMEMQ_ERROR_INVALID_NAME;
+        return;
     }
 
     for (const char *chr = &name[1]; *chr; ++chr) {
-        if (*chr == '/') return SHMEMQ_ERROR_INVALID_NAME;
+        if (*chr == '/') {
+            if (error_ptr) *error_ptr = SHMEMQ_ERROR_INVALID_NAME;
+            return;
+        }
     }
 
     strcpy(shmemq->name, name);
@@ -82,12 +97,16 @@ enum Shmemq_Error shmemq_init(
         S_IRUSR | S_IWUSR
     );
 
-    if (shmemq->shm_id == -1) return SHMEMQ_ERROR_FAILED_SHM_OPEN;
+    if (shmemq->shm_id == -1) {
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_SHM_OPEN;
+        return;
+    }
 
     if (shmemq->is_consumer) {
         if (ftruncate(shmemq->shm_id, SHMEMQ_BUFFER_SIZE_MIN) != 0) {
             shm_unlink(shmemq->name);
-            return SHMEMQ_ERROR_FAILED_FTRUNCATE;
+            if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_FTRUNCATE;
+            return;
         }
     }
 
@@ -102,7 +121,8 @@ enum Shmemq_Error shmemq_init(
 
     if (shmemq->buffer == MAP_FAILED) {
         shm_unlink(shmemq->name);
-        return SHMEMQ_ERROR_FAILED_MMAP;
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_MMAP;
+        return;
     }
 
     // We don't really need this condition, but it is useful in tests
@@ -119,5 +139,5 @@ enum Shmemq_Error shmemq_init(
         shmemq->buffer->header.write_frame_index = 0;
     }
 
-    return SHMEMQ_ERROR_NONE;
+    if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
 }

@@ -68,15 +68,16 @@ Shmemq shmemq_new(
     enum Shmemq_Error *error_ptr
 );
 
-enum Shmemq_Error shmemq_init(
+void shmemq_init(
     Shmemq shmemq,
     const char *name,
-    bool is_consumer
+    bool is_consumer,
+    enum Shmemq_Error *error_ptr
 );
 
-enum Shmemq_Error shmemq_delete(Shmemq shmemq);
+void shmemq_delete(Shmemq shmemq, enum Shmemq_Error *error_ptr);
 
-enum Shmemq_Error shmemq_finish(Shmemq shmemq);
+void shmemq_finish(Shmemq shmemq, enum Shmemq_Error *error_ptr);
 
 #ifdef __cplusplus
 }
