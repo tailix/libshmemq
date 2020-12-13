@@ -62,11 +62,7 @@ typedef struct Shmemq {
     struct ShmemqBuffer *buffer;
 } *Shmemq;
 
-Shmemq shmemq_new(
-    const char *name,
-    bool is_consumer,
-    ShmemqError *error_ptr
-);
+Shmemq shmemq_new(const char *name, bool is_consumer, ShmemqError *error_ptr);
 
 void shmemq_init(
     Shmemq shmemq,
