@@ -53,12 +53,12 @@ struct Shmemq_Buffer {
     struct Shmemq_Frame frames[];
 };
 
-struct Shmemq {
+typedef struct Shmemq {
     char name[SHMEMQ_NAME_SIZE_MAX];
     bool is_consumer;
     int shm_id;
     struct Shmemq_Buffer *buffer;
-};
+} *Shmemq;
 
 struct Shmemq *shmemq_new(
     const char *name,

@@ -23,7 +23,7 @@ int main()
     assert(consumer_shmemq.buffer->header.write_frame_index == 0);
 
     enum Shmemq_Error error;
-    struct Shmemq *producer_shmemq = shmemq_new(name, false, &error);
+    const Shmemq producer_shmemq = shmemq_new(name, false, &error);
 
     assert(producer_shmemq != NULL);
     assert(error == SHMEMQ_ERROR_NONE);
