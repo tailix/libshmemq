@@ -64,7 +64,7 @@ enum Shmemq_Error shmemq_init(
         S_IRUSR | S_IWUSR
     );
 
-    if (shmemq->shm_id == -1) return SHMEMQ_ERROR_FAILED_SHARED_MEMORY;
+    if (shmemq->shm_id == -1) return SHMEMQ_ERROR_FAILED_SHM_OPEN;
 
     struct stat statbuf;
 
