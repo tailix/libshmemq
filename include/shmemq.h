@@ -20,6 +20,7 @@ enum Shmemq_Error {
     SHMEMQ_ERROR_NONE = 0,
     SHMEMQ_ERROR_MALLOC = 1,
     SHMEMQ_ERROR_INVALID_NAME = 2,
+    SHMEMQ_ERROR_SHARED_MEMORY = 3,
 };
 
 struct Shmemq_FrameHeader {
@@ -45,6 +46,7 @@ struct Shmemq_Buffer {
 struct Shmemq {
     char name[SHMEMQ_NAME_SIZE_MAX];
     bool is_consumer;
+    int shm_id;
     struct Shmemq_Buffer *buffer;
 };
 

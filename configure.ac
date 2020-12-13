@@ -30,9 +30,12 @@ AC_FUNC_MALLOC
 AC_FUNC_MMAP
 
 AC_CHECK_HEADER_STDBOOL
+AC_CHECK_HEADERS([fcntl.h])
 AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([string.h])
+AC_CHECK_HEADERS([sys/mman.h])
+AC_CHECK_HEADERS([sys/stat.h])
 
 AC_CHECK_FUNCS([ftruncate])
 AC_CHECK_FUNCS([munmap])
