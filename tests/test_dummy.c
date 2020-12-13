@@ -2,6 +2,7 @@
 #include "config.h"
 #endif
 
+#include <shmemq.h>
 #include <shmemq/dummy.h>
 
 int main()
