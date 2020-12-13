@@ -74,7 +74,7 @@ enum Shmemq_Error shmemq_init(
 
     strcpy(shmemq->name, name);
 
-    shmemq->is_consumer = is_consumer;
+    shmemq->is_consumer = !!is_consumer;
 
     shmemq->shm_id = shm_open(
         shmemq->name,
