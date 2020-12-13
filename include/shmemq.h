@@ -29,6 +29,7 @@ enum Shmemq_Error {
     SHMEMQ_ERROR_FAILED_SHARED_MEMORY = 254,
     SHMEMQ_ERROR_FAILED_FSTAT         = 253,
     SHMEMQ_ERROR_FAILED_FTRUNCATE     = 252,
+    SHMEMQ_ERROR_FAILED_MMAP          = 251,
 };
 
 struct Shmemq_FrameHeader {

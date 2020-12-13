@@ -94,7 +94,19 @@ enum Shmemq_Error shmemq_init(
         }
     }
 
-    shmemq->buffer = NULL;
+    shmemq->buffer = mmap(
+        NULL,
+        min_size,
+        PROT_READ | PROT_WRITE,
+        MAP_SHARED,
+        shmemq->shm_id,
+        0
+    );
+
+    if (shmemq->buffer == MAP_FAILED) {
+        shm_unlink(shmemq->name);
+        return SHMEMQ_ERROR_FAILED_MMAP;
+    }
 
     return SHMEMQ_ERROR_NONE;
 }
