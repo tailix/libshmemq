@@ -23,10 +23,13 @@ enum Shmemq_Error {
 
     SHMEMQ_ERROR_INVALID_NAME = 1,
 
-    SHMEMQ_ERROR_FAILED_MALLOC    = 255,
-    SHMEMQ_ERROR_FAILED_SHM_OPEN  = 254,
-    SHMEMQ_ERROR_FAILED_FTRUNCATE = 253,
-    SHMEMQ_ERROR_FAILED_MMAP      = 252,
+    SHMEMQ_ERROR_FAILED_MALLOC     = 255,
+    SHMEMQ_ERROR_FAILED_SHM_OPEN   = 254,
+    SHMEMQ_ERROR_FAILED_FTRUNCATE  = 253,
+    SHMEMQ_ERROR_FAILED_MMAP       = 252,
+    SHMEMQ_ERROR_FAILED_MUNMAP     = 251,
+    SHMEMQ_ERROR_FAILED_CLOSE      = 250,
+    SHMEMQ_ERROR_FAILED_SHM_UNLINK = 249,
 };
 
 struct Shmemq_FrameHeader {
@@ -67,6 +70,10 @@ enum Shmemq_Error shmemq_init(
     const char *name,
     bool is_consumer
 );
+
+enum Shmemq_Error shmemq_delete(struct Shmemq *shmemq);
+
+enum Shmemq_Error shmemq_finish(struct Shmemq *shmemq);
 
 #ifdef __cplusplus
 }

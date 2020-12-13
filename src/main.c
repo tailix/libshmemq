@@ -9,6 +9,32 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+enum Shmemq_Error shmemq_delete(struct Shmemq *shmemq)
+{
+    const enum Shmemq_Error error = shmemq_finish(shmemq);
+    free(shmemq);
+    return error;
+}
+
+enum Shmemq_Error shmemq_finish(struct Shmemq *shmemq)
+{
+    const size_t size =
+        sizeof(struct Shmemq_BufferHeader) +
+        SHMEMQ_FRAME_SIZE * shmemq->buffer->header.frames_count;
+
+    if (munmap(shmemq->buffer, size) != 0) return SHMEMQ_ERROR_FAILED_MUNMAP;
+    shmemq->buffer = NULL;
+
+    if (close(shmemq->shm_id) != 0) return SHMEMQ_ERROR_FAILED_CLOSE;
+    shmemq->shm_id = -1;
+
+    if (shmemq->is_consumer && shm_unlink(shmemq->name) != 0) {
+        return SHMEMQ_ERROR_FAILED_SHM_UNLINK;
+    }
+
+    return SHMEMQ_ERROR_NONE;
+}
+
 struct Shmemq *shmemq_new(
     const char *const name,
     const bool is_consumer,

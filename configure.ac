@@ -38,6 +38,8 @@ AC_CHECK_HEADERS([sys/mman.h])
 AC_CHECK_HEADERS([sys/stat.h])
 AC_CHECK_HEADERS([unistd.h])
 
+AC_CHECK_FUNCS([close])
+AC_CHECK_FUNCS([free])
 AC_CHECK_FUNCS([ftruncate])
 AC_CHECK_FUNCS([memset])
 AC_CHECK_FUNCS([munmap])
