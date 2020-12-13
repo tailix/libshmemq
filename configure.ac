@@ -6,7 +6,7 @@ AC_INIT([libshmemq],
   [https://github.com/kotovalexarian/libshmemq])
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_SRCDIR([src/dummy.c])
+AC_CONFIG_SRCDIR([src/main.c])
 
 AC_CANONICAL_HOST
 

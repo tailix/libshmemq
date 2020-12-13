@@ -9,7 +9,6 @@ AM_CFLAGS = \
 lib_LIBRARIES = libshmemq.a
 
 TESTS = \
-	examples/dummy \
 	tests/test_dummy
 
 noinst_PROGRAMS = \
@@ -17,13 +16,7 @@ noinst_PROGRAMS = \
 	examples/raw_receiver \
 	examples/raw_sender
 
-libshmemq_a_SOURCES = \
-	src/dummy.c \
-	src/main.c
-
-examples_dummy_SOURCES = \
-	$(libshmemq_a_SOURCES) \
-	examples/dummy.c
+libshmemq_a_SOURCES = src/main.c
 
 examples_raw_receiver_SOURCES = \
 	$(libshmemq_a_SOURCES) \

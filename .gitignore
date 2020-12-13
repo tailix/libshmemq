@@ -34,7 +34,6 @@
 /tests/test*.log
 /tests/test*.trs
 
-/examples/dummy
 /examples/raw_receiver
 /examples/raw_sender
 /tests/test_dummy

@@ -1,3 +1,1 @@
-nobase_include_HEADERS = \
-	shmemq.h \
-	shmemq/dummy.h
+nobase_include_HEADERS = shmemq.h
