@@ -84,9 +84,11 @@ enum Shmemq_Error shmemq_init(
 
     if (shmemq->shm_id == -1) return SHMEMQ_ERROR_FAILED_SHM_OPEN;
 
-    if (ftruncate(shmemq->shm_id, SHMEMQ_BUFFER_SIZE_MIN) != 0) {
-        shm_unlink(shmemq->name);
-        return SHMEMQ_ERROR_FAILED_FTRUNCATE;
+    if (shmemq->is_consumer) {
+        if (ftruncate(shmemq->shm_id, SHMEMQ_BUFFER_SIZE_MIN) != 0) {
+            shm_unlink(shmemq->name);
+            return SHMEMQ_ERROR_FAILED_FTRUNCATE;
+        }
     }
 
     shmemq->buffer = mmap(
@@ -103,9 +105,11 @@ enum Shmemq_Error shmemq_init(
         return SHMEMQ_ERROR_FAILED_MMAP;
     }
 
-    shmemq->buffer->header.frames_count = 0;
-    shmemq->buffer->header.read_frame_index = 0;
-    shmemq->buffer->header.write_frame_index = 0;
+    if (shmemq->is_consumer) {
+        shmemq->buffer->header.frames_count = 0;
+        shmemq->buffer->header.read_frame_index = 0;
+        shmemq->buffer->header.write_frame_index = 0;
+    }
 
     return SHMEMQ_ERROR_NONE;
 }
