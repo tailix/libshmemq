@@ -18,7 +18,8 @@ noinst_PROGRAMS = \
 	examples/raw_sender
 
 libshmemq_a_SOURCES = \
-	src/dummy.c
+	src/dummy.c \
+	src/main.c
 
 examples_dummy_SOURCES = \
 	$(libshmemq_a_SOURCES) \
