@@ -21,14 +21,14 @@ struct Shmemq_Frame {
     unsigned char data[SHMEMQ_FRAME_DATA_SIZE];
 };
 
-struct Shmemq_QueueHeader {
+struct Shmemq_BufferHeader {
     size_t frames_count;
     size_t read_frame_index;
     size_t write_frame_index;
 };
 
-struct Shmemq_Queue {
-    struct Shmemq_QueueHeader header;
+struct Shmemq_Buffer {
+    struct Shmemq_BufferHeader header;
     struct Shmemq_Frame frames[];
 };
 
