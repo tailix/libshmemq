@@ -2,6 +2,8 @@
 #include "config.h"
 #endif
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <shmemq.h>
 
 #include <fcntl.h>
@@ -9,6 +11,7 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 struct Shmemq *shmemq_new(
     const char *const name,
@@ -58,6 +61,25 @@ enum Shmemq_Error shmemq_init(
     );
 
     if (shmemq->shm_id == -1) return SHMEMQ_ERROR_SHARED_MEMORY;
+
+    struct stat statbuf;
+
+    if (fstat(shmemq->shm_id, &statbuf) != 0) return SHMEMQ_ERROR_FSTAT;
+
+    const size_t min_size =
+        shmemq->is_consumer ? sizeof(struct Shmemq_BufferHeader) : size;
+
+    if ((size_t)statbuf.st_size < min_size) {
+        if (ftruncate(shmemq->shm_id, min_size) != 0) {
+            return SHMEMQ_ERROR_FTRUNCATE;
+        }
+    }
+
+    if (fstat(shmemq->shm_id, &statbuf) != 0) return SHMEMQ_ERROR_FSTAT;
+
+    if ((size_t)statbuf.st_size < size && !shmemq->is_consumer) {
+        if (ftruncate(shmemq->shm_id, size) != 0) return SHMEMQ_ERROR_FTRUNCATE;
+    }
 
     shmemq->buffer = NULL;
 

@@ -36,13 +36,17 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_CHECK_HEADERS([string.h])
 AC_CHECK_HEADERS([sys/mman.h])
 AC_CHECK_HEADERS([sys/stat.h])
+AC_CHECK_HEADERS([unistd.h])
 
 AC_CHECK_FUNCS([ftruncate])
+AC_CHECK_FUNCS([fstat])
 AC_CHECK_FUNCS([munmap])
 AC_CHECK_FUNCS([strcpy])
 AC_CHECK_FUNCS([strlen])
 
 AC_SEARCH_LIBS([shm_open], [rt])
 AC_SEARCH_LIBS([shm_unlink], [rt])
+
+AC_CHECK_MEMBER([struct stat.st_size], [], [], [#include <sys/stat.h>])
 
 AC_OUTPUT

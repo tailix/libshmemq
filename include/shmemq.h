@@ -21,6 +21,8 @@ enum Shmemq_Error {
     SHMEMQ_ERROR_MALLOC = 1,
     SHMEMQ_ERROR_INVALID_NAME = 2,
     SHMEMQ_ERROR_SHARED_MEMORY = 3,
+    SHMEMQ_ERROR_FSTAT = 4,
+    SHMEMQ_ERROR_FTRUNCATE = 5,
 };
 
 struct Shmemq_FrameHeader {
