@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
+#define SHMEMQ_NAME_SLEN_MAX (SHMEMQ_NAME_SIZE_MAX - 1)
 
 #define SHMEMQ_FRAME_SIZE ((size_t)8)
 

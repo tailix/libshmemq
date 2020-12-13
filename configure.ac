@@ -32,9 +32,12 @@ AC_FUNC_MMAP
 AC_CHECK_HEADER_STDBOOL
 AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([string.h])
 
 AC_CHECK_FUNCS([ftruncate])
 AC_CHECK_FUNCS([munmap])
+AC_CHECK_FUNCS([strcpy])
+AC_CHECK_FUNCS([strlen])
 
 AC_SEARCH_LIBS([shm_open], [rt])
 AC_SEARCH_LIBS([shm_unlink], [rt])

@@ -5,6 +5,7 @@
 #include <shmemq.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 struct Shmemq *shmemq_new(
     const char *const name,
@@ -35,5 +36,19 @@ enum Shmemq_Error shmemq_init(
     const char *const name,
     const size_t size
 ) {
+    if (strlen(name) > SHMEMQ_NAME_SLEN_MAX || name[0] != '/') {
+        return SHMEMQ_ERROR_INVALID_NAME;
+    }
+
+    for (const char *chr = &name[1]; *chr; ++chr) {
+        if (*chr == '/') return SHMEMQ_ERROR_INVALID_NAME;
+    }
+
+    strcpy(shmemq->name, name);
+
+    shmemq->is_consumer = size == 0;
+
+    shmemq->buffer = NULL;
+
     return SHMEMQ_ERROR_NONE;
 }
