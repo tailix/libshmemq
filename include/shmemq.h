@@ -15,6 +15,12 @@
 extern "C" {
 #endif
 
+enum Shmemq_Error {
+    SHMEMQ_ERROR_NONE = 0,
+    SHMEMQ_ERROR_MALLOC = 1,
+    SHMEMQ_ERROR_INVALID_NAME = 2,
+};
+
 struct Shmemq_FrameHeader {
     size_t frame_size;
 };
@@ -40,6 +46,12 @@ struct Shmemq {
     bool is_consumer;
     struct Shmemq_Buffer *buffer;
 };
+
+struct Shmemq*
+shmemq_new(const char *name, size_t size, enum Shmemq_Error *error_ptr);
+
+enum Shmemq_Error
+shmemq_init(struct Shmemq *shmemq, const char *name, size_t size);
 
 #ifdef __cplusplus
 }
