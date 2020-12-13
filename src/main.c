@@ -43,11 +43,11 @@ enum Shmemq_Error shmemq_init(
     const size_t size
 ) {
     if (strlen(name) > SHMEMQ_NAME_SLEN_MAX || name[0] != '/') {
-        return SHMEMQ_ERROR_INVALID_NAME;
+        return SHMEMQ_ERROR_NAME;
     }
 
     for (const char *chr = &name[1]; *chr; ++chr) {
-        if (*chr == '/') return SHMEMQ_ERROR_INVALID_NAME;
+        if (*chr == '/') return SHMEMQ_ERROR_NAME;
     }
 
     strcpy(shmemq->name, name);
