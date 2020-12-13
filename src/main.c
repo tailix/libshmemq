@@ -146,3 +146,16 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
 {
     return &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
 }
+
+void shmemq_push_end(const Shmemq shmemq, const ShmemqFrame frame)
+{
+    const size_t new_write_frame_index =
+        shmemq->buffer->header.write_frame_index + frame->header.frame_size;
+
+    if (new_write_frame_index >= shmemq->buffer->header.frames_count) {
+        shmemq->buffer->header.write_frame_index = 0;
+    }
+    else {
+        shmemq->buffer->header.write_frame_index = new_write_frame_index;
+    }
+}

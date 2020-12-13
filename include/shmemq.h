@@ -77,6 +77,8 @@ void shmemq_finish(Shmemq shmemq, ShmemqError *error_ptr);
 
 ShmemqFrame shmemq_push_start(Shmemq shmemq);
 
+void shmemq_push_end(Shmemq shmemq, ShmemqFrame frame);
+
 #ifdef __cplusplus
 }
 #endif
