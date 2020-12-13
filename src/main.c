@@ -68,7 +68,7 @@ enum Shmemq_Error shmemq_init(
 
     struct stat statbuf;
 
-    if (fstat(shmemq->shm_id, &statbuf) != 0) {
+    if (fstat(shmemq->shm_id, &statbuf) != 0 || statbuf.st_size < 0) {
         shm_unlink(shmemq->name);
         return SHMEMQ_ERROR_FAILED_FSTAT;
     }
@@ -76,18 +76,6 @@ enum Shmemq_Error shmemq_init(
     const size_t min_size = size == 0 ? SHMEMQ_BUFFER_SIZE_MIN : size;
 
     if ((size_t)statbuf.st_size < min_size) {
-        if (ftruncate(shmemq->shm_id, min_size) != 0) {
-            shm_unlink(shmemq->name);
-            return SHMEMQ_ERROR_FAILED_FTRUNCATE;
-        }
-    }
-
-    if (fstat(shmemq->shm_id, &statbuf) != 0) {
-        shm_unlink(shmemq->name);
-        return SHMEMQ_ERROR_FAILED_FSTAT;
-    }
-
-    if ((size_t)statbuf.st_size < size && !shmemq->is_consumer) {
         if (ftruncate(shmemq->shm_id, min_size) != 0) {
             shm_unlink(shmemq->name);
             return SHMEMQ_ERROR_FAILED_FTRUNCATE;
@@ -107,6 +95,10 @@ enum Shmemq_Error shmemq_init(
         shm_unlink(shmemq->name);
         return SHMEMQ_ERROR_FAILED_MMAP;
     }
+
+    shmemq->buffer->header.frames_count = 0;
+    shmemq->buffer->header.read_frame_index = 0;
+    shmemq->buffer->header.write_frame_index = 0;
 
     return SHMEMQ_ERROR_NONE;
 }
