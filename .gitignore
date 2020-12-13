@@ -36,5 +36,4 @@
 
 /examples/raw_receiver
 /examples/raw_sender
-/tests/test_dummy
 /tests/test_init
