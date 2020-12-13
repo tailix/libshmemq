@@ -7,8 +7,12 @@
 #define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
 #define SHMEMQ_NAME_SLEN_MAX (SHMEMQ_NAME_SIZE_MAX - 1)
 
-#define SHMEMQ_BUFFER_SIZE_MIN \
-    (sizeof(struct Shmemq_BufferHeader) + SHMEMQ_FRAME_SIZE)
+#define SHMEMQ_BUFFER_FRAMES_COUNT_MIN 10
+
+#define SHMEMQ_BUFFER_SIZE_MIN (                       \
+    sizeof(struct Shmemq_BufferHeader) +               \
+    SHMEMQ_BUFFER_FRAMES_COUNT_MIN * SHMEMQ_FRAME_SIZE \
+)
 
 #define SHMEMQ_FRAME_SIZE ((size_t)8)
 
@@ -59,11 +63,19 @@ struct Shmemq {
     struct Shmemq_Buffer *buffer;
 };
 
-struct Shmemq*
-shmemq_new(const char *name, size_t size, enum Shmemq_Error *error_ptr);
+struct Shmemq *shmemq_new(
+    const char *name,
+    bool is_consumer,
+    size_t size,
+    enum Shmemq_Error *error_ptr
+);
 
-enum Shmemq_Error
-shmemq_init(struct Shmemq *shmemq, const char *name, size_t size);
+enum Shmemq_Error shmemq_init(
+    struct Shmemq *shmemq,
+    const char *name,
+    bool is_consumer,
+    size_t size
+);
 
 #ifdef __cplusplus
 }
