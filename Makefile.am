@@ -9,10 +9,7 @@ AM_CFLAGS = \
 lib_LIBRARIES = libshmemq.a
 
 TESTS = \
-	tests/test_finish_consumer \
-	tests/test_finish_producer \
-	tests/test_init_consumer \
-	tests/test_init_producer
+	tests/test_main
 
 noinst_PROGRAMS = \
 	$(TESTS) \
@@ -29,18 +26,6 @@ examples_raw_sender_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	examples/raw_sender.c
 
-tests_test_finish_consumer_SOURCES = \
+tests_test_main_SOURCES = \
 	$(libshmemq_a_SOURCES) \
-	tests/test_finish_consumer.c
-
-tests_test_finish_producer_SOURCES = \
-	$(libshmemq_a_SOURCES) \
-	tests/test_finish_producer.c
-
-tests_test_init_consumer_SOURCES = \
-	$(libshmemq_a_SOURCES) \
-	tests/test_init_consumer.c
-
-tests_test_init_producer_SOURCES = \
-	$(libshmemq_a_SOURCES) \
-	tests/test_init_producer.c
+	tests/test_main.c
