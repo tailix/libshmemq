@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
+
 #define SHMEMQ_FRAME_SIZE ((size_t)8)
 
 #define SHMEMQ_FRAME_DATA_SIZE \
@@ -30,6 +32,11 @@ struct Shmemq_BufferHeader {
 struct Shmemq_Buffer {
     struct Shmemq_BufferHeader header;
     struct Shmemq_Frame frames[];
+};
+
+struct Shmemq {
+    char name[SHMEMQ_NAME_SIZE_MAX];
+    struct Shmemq_Buffer *buffer;
 };
 
 #ifdef __cplusplus
