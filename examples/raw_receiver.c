@@ -32,7 +32,7 @@ int main()
     printf("Create queue.\n");
 
     enum Shmemq_Error shmemq_error;
-    struct Shmemq *shmemq = shmemq_new("/buffer1", true, &shmemq_error);
+    Shmemq shmemq = shmemq_new("/buffer1", true, &shmemq_error);
 
     assert(shmemq_error == SHMEMQ_ERROR_NONE);
     assert(shmemq != NULL);

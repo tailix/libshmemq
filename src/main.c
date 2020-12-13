@@ -9,14 +9,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-enum Shmemq_Error shmemq_delete(struct Shmemq *shmemq)
+enum Shmemq_Error shmemq_delete(const Shmemq shmemq)
 {
     const enum Shmemq_Error error = shmemq_finish(shmemq);
     free(shmemq);
     return error;
 }
 
-enum Shmemq_Error shmemq_finish(struct Shmemq *shmemq)
+enum Shmemq_Error shmemq_finish(const Shmemq shmemq)
 {
     const size_t size =
         sizeof(struct Shmemq_BufferHeader) +
@@ -35,12 +35,12 @@ enum Shmemq_Error shmemq_finish(struct Shmemq *shmemq)
     return SHMEMQ_ERROR_NONE;
 }
 
-struct Shmemq *shmemq_new(
+Shmemq shmemq_new(
     const char *const name,
     const bool is_consumer,
     enum Shmemq_Error *const error_ptr
 ) {
-    struct Shmemq *const shmemq = malloc(sizeof(*shmemq));
+    const Shmemq shmemq = malloc(sizeof(*shmemq));
 
     if (!shmemq) {
         if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_MALLOC;
@@ -60,7 +60,7 @@ struct Shmemq *shmemq_new(
 }
 
 enum Shmemq_Error shmemq_init(
-    struct Shmemq *const shmemq,
+    const Shmemq shmemq,
     const char *const name,
     const bool is_consumer
 ) {

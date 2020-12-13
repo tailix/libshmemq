@@ -62,21 +62,21 @@ typedef struct Shmemq {
     struct Shmemq_Buffer *buffer;
 } *Shmemq;
 
-struct Shmemq *shmemq_new(
+Shmemq shmemq_new(
     const char *name,
     bool is_consumer,
     enum Shmemq_Error *error_ptr
 );
 
 enum Shmemq_Error shmemq_init(
-    struct Shmemq *shmemq,
+    Shmemq shmemq,
     const char *name,
     bool is_consumer
 );
 
-enum Shmemq_Error shmemq_delete(struct Shmemq *shmemq);
+enum Shmemq_Error shmemq_delete(Shmemq shmemq);
 
-enum Shmemq_Error shmemq_finish(struct Shmemq *shmemq);
+enum Shmemq_Error shmemq_finish(Shmemq shmemq);
 
 #ifdef __cplusplus
 }
