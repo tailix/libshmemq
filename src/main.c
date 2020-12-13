@@ -52,6 +52,10 @@ enum Shmemq_Error shmemq_init(
 
     strcpy(shmemq->name, name);
 
+    if (size != 0 && size < SHMEMQ_BUFFER_SIZE_MIN) {
+        return SHMEMQ_ERROR_INVALID_SIZE;
+    }
+
     shmemq->is_consumer = size == 0;
 
     shmemq->shm_id = shm_open(
@@ -69,8 +73,7 @@ enum Shmemq_Error shmemq_init(
         return SHMEMQ_ERROR_FAILED_FSTAT;
     }
 
-    const size_t min_size =
-        shmemq->is_consumer ? sizeof(struct Shmemq_BufferHeader) : size;
+    const size_t min_size = size == 0 ? SHMEMQ_BUFFER_SIZE_MIN : size;
 
     if ((size_t)statbuf.st_size < min_size) {
         if (ftruncate(shmemq->shm_id, min_size) != 0) {
@@ -85,7 +88,7 @@ enum Shmemq_Error shmemq_init(
     }
 
     if ((size_t)statbuf.st_size < size && !shmemq->is_consumer) {
-        if (ftruncate(shmemq->shm_id, size) != 0) {
+        if (ftruncate(shmemq->shm_id, min_size) != 0) {
             shm_unlink(shmemq->name);
             return SHMEMQ_ERROR_FAILED_FTRUNCATE;
         }

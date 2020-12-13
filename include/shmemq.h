@@ -7,10 +7,13 @@
 #define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
 #define SHMEMQ_NAME_SLEN_MAX (SHMEMQ_NAME_SIZE_MAX - 1)
 
+#define SHMEMQ_BUFFER_SIZE_MIN \
+    (sizeof(struct Shmemq_BufferHeader) + SHMEMQ_FRAME_SIZE)
+
 #define SHMEMQ_FRAME_SIZE ((size_t)8)
 
 #define SHMEMQ_FRAME_DATA_SIZE \
-  (SHMEMQ_FRAME_SIZE - sizeof(struct Shmemq_FrameHeader))
+    (SHMEMQ_FRAME_SIZE - sizeof(struct Shmemq_FrameHeader))
 
 #ifdef __cplusplus
 extern "C" {
