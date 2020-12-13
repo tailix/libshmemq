@@ -31,7 +31,7 @@ int main()
 
     printf("Create queue.\n");
 
-    enum ShmemqError shmemq_error;
+    ShmemqError shmemq_error;
     Shmemq shmemq = shmemq_new("/buffer1", true, &shmemq_error);
 
     assert(shmemq_error == SHMEMQ_ERROR_NONE);

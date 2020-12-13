@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-enum ShmemqError {
+typedef enum ShmemqError {
     SHMEMQ_ERROR_NONE = 0,
 
     SHMEMQ_ERROR_INVALID_NAME = 1,
@@ -32,7 +32,7 @@ enum ShmemqError {
     SHMEMQ_ERROR_FAILED_MUNMAP     = 251,
     SHMEMQ_ERROR_FAILED_CLOSE      = 250,
     SHMEMQ_ERROR_FAILED_SHM_UNLINK = 249,
-};
+} ShmemqError;
 
 struct ShmemqFrameHeader {
     size_t frame_size;
@@ -65,19 +65,19 @@ typedef struct Shmemq {
 Shmemq shmemq_new(
     const char *name,
     bool is_consumer,
-    enum ShmemqError *error_ptr
+    ShmemqError *error_ptr
 );
 
 void shmemq_init(
     Shmemq shmemq,
     const char *name,
     bool is_consumer,
-    enum ShmemqError *error_ptr
+    ShmemqError *error_ptr
 );
 
-void shmemq_delete(Shmemq shmemq, enum ShmemqError *error_ptr);
+void shmemq_delete(Shmemq shmemq, ShmemqError *error_ptr);
 
-void shmemq_finish(Shmemq shmemq, enum ShmemqError *error_ptr);
+void shmemq_finish(Shmemq shmemq, ShmemqError *error_ptr);
 
 #ifdef __cplusplus
 }

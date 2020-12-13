@@ -9,13 +9,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-void shmemq_delete(const Shmemq shmemq, enum ShmemqError *const error_ptr)
+void shmemq_delete(const Shmemq shmemq, ShmemqError *const error_ptr)
 {
     shmemq_finish(shmemq, error_ptr);
     free(shmemq);
 }
 
-void shmemq_finish(const Shmemq shmemq, enum ShmemqError *const error_ptr)
+void shmemq_finish(const Shmemq shmemq, ShmemqError *const error_ptr)
 {
     const size_t size =
         sizeof(struct ShmemqBufferHeader) +
@@ -46,7 +46,7 @@ void shmemq_finish(const Shmemq shmemq, enum ShmemqError *const error_ptr)
 Shmemq shmemq_new(
     const char *const name,
     const bool is_consumer,
-    enum ShmemqError *const error_ptr
+    ShmemqError *const error_ptr
 ) {
     const Shmemq shmemq = malloc(sizeof(*shmemq));
 
@@ -55,7 +55,7 @@ Shmemq shmemq_new(
         return NULL;
     }
 
-    enum ShmemqError error;
+    ShmemqError error;
     shmemq_init(shmemq, name, is_consumer, &error);
 
     if (error_ptr) *error_ptr = error;
@@ -73,7 +73,7 @@ void shmemq_init(
     const Shmemq shmemq,
     const char *const name,
     const bool is_consumer,
-    enum ShmemqError *const error_ptr
+    ShmemqError *const error_ptr
 ) {
     if (strlen(name) > SHMEMQ_NAME_SLEN_MAX || name[0] != '/') {
         *error_ptr = SHMEMQ_ERROR_INVALID_NAME;
