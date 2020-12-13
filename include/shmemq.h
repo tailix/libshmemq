@@ -42,6 +42,7 @@ struct Shmemq_Frame {
 };
 
 struct Shmemq_BufferHeader {
+    bool is_ready;
     size_t frames_count;
     size_t read_frame_index;
     size_t write_frame_index;

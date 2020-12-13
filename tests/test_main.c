@@ -20,6 +20,7 @@ int main()
     assert(consumer_shmemq.is_consumer == true);
     assert(consumer_shmemq.shm_id != -1);
     assert(consumer_shmemq.buffer != NULL);
+    assert(consumer_shmemq.buffer->header.is_ready == false);
     assert(consumer_shmemq.buffer->header.frames_count == 0);
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 0);
@@ -30,9 +31,15 @@ int main()
     assert(producer_shmemq.is_consumer == false);
     assert(producer_shmemq.shm_id != -1);
     assert(producer_shmemq.buffer != NULL);
+    assert(producer_shmemq.buffer->header.is_ready == false);
     assert(producer_shmemq.buffer->header.frames_count == 0);
     assert(producer_shmemq.buffer->header.read_frame_index == 0);
     assert(producer_shmemq.buffer->header.write_frame_index == 0);
+
+    assert(consumer_shmemq.buffer != producer_shmemq.buffer);
+
+    consumer_shmemq.buffer->header.is_ready = true;
+    assert(producer_shmemq.buffer->header.is_ready == true);
 
     assert(shmemq_finish(&consumer_shmemq) == SHMEMQ_ERROR_NONE);
     assert(shmemq_finish(&producer_shmemq) == SHMEMQ_ERROR_NONE);
