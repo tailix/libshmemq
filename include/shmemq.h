@@ -7,12 +7,7 @@
 #define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
 #define SHMEMQ_NAME_SLEN_MAX (SHMEMQ_NAME_SIZE_MAX - 1)
 
-#define SHMEMQ_BUFFER_FRAMES_COUNT_MIN 10
-
-#define SHMEMQ_BUFFER_SIZE_MIN (                       \
-    sizeof(struct Shmemq_BufferHeader) +               \
-    SHMEMQ_BUFFER_FRAMES_COUNT_MIN * SHMEMQ_FRAME_SIZE \
-)
+#define SHMEMQ_BUFFER_SIZE_MIN (sizeof(struct Shmemq_BufferHeader))
 
 #define SHMEMQ_FRAME_SIZE ((size_t)8)
 
@@ -27,13 +22,11 @@ enum Shmemq_Error {
     SHMEMQ_ERROR_NONE = 0,
 
     SHMEMQ_ERROR_INVALID_NAME = 1,
-    SHMEMQ_ERROR_INVALID_SIZE = 2,
 
     SHMEMQ_ERROR_FAILED_MALLOC    = 255,
     SHMEMQ_ERROR_FAILED_SHM_OPEN  = 254,
-    SHMEMQ_ERROR_FAILED_FSTAT     = 253,
-    SHMEMQ_ERROR_FAILED_FTRUNCATE = 252,
-    SHMEMQ_ERROR_FAILED_MMAP      = 251,
+    SHMEMQ_ERROR_FAILED_FTRUNCATE = 253,
+    SHMEMQ_ERROR_FAILED_MMAP      = 252,
 };
 
 struct Shmemq_FrameHeader {
@@ -66,15 +59,13 @@ struct Shmemq {
 struct Shmemq *shmemq_new(
     const char *name,
     bool is_consumer,
-    size_t size,
     enum Shmemq_Error *error_ptr
 );
 
 enum Shmemq_Error shmemq_init(
     struct Shmemq *shmemq,
     const char *name,
-    bool is_consumer,
-    size_t size
+    bool is_consumer
 );
 
 #ifdef __cplusplus

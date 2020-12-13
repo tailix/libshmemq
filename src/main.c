@@ -16,7 +16,6 @@
 struct Shmemq *shmemq_new(
     const char *const name,
     const bool is_consumer,
-    const size_t size,
     enum Shmemq_Error *const error_ptr
 ) {
     struct Shmemq *const shmemq = malloc(sizeof(*shmemq));
@@ -26,8 +25,7 @@ struct Shmemq *shmemq_new(
         return NULL;
     }
 
-    const enum Shmemq_Error error =
-        shmemq_init(shmemq, name, is_consumer, size);
+    const enum Shmemq_Error error = shmemq_init(shmemq, name, is_consumer);
 
     if (error_ptr) *error_ptr = error;
 
@@ -42,8 +40,7 @@ struct Shmemq *shmemq_new(
 enum Shmemq_Error shmemq_init(
     struct Shmemq *const shmemq,
     const char *const name,
-    const bool is_consumer,
-    size_t size
+    const bool is_consumer
 ) {
     if (strlen(name) > SHMEMQ_NAME_SLEN_MAX || name[0] != '/') {
         return SHMEMQ_ERROR_INVALID_NAME;
@@ -55,10 +52,6 @@ enum Shmemq_Error shmemq_init(
 
     strcpy(shmemq->name, name);
 
-    if (size == 0) size = SHMEMQ_BUFFER_FRAMES_COUNT_MIN;
-
-    if (size < SHMEMQ_BUFFER_SIZE_MIN) return SHMEMQ_ERROR_INVALID_SIZE;
-
     shmemq->is_consumer = is_consumer;
 
     shmemq->shm_id = shm_open(
@@ -69,23 +62,14 @@ enum Shmemq_Error shmemq_init(
 
     if (shmemq->shm_id == -1) return SHMEMQ_ERROR_FAILED_SHM_OPEN;
 
-    struct stat statbuf;
-
-    if (fstat(shmemq->shm_id, &statbuf) != 0 || statbuf.st_size < 0) {
+    if (ftruncate(shmemq->shm_id, SHMEMQ_BUFFER_SIZE_MIN) != 0) {
         shm_unlink(shmemq->name);
-        return SHMEMQ_ERROR_FAILED_FSTAT;
-    }
-
-    if ((size_t)statbuf.st_size < size) {
-        if (ftruncate(shmemq->shm_id, size) != 0) {
-            shm_unlink(shmemq->name);
-            return SHMEMQ_ERROR_FAILED_FTRUNCATE;
-        }
+        return SHMEMQ_ERROR_FAILED_FTRUNCATE;
     }
 
     shmemq->buffer = mmap(
         NULL,
-        size,
+        SHMEMQ_BUFFER_SIZE_MIN,
         PROT_READ | PROT_WRITE,
         MAP_SHARED,
         shmemq->shm_id,
@@ -97,9 +81,7 @@ enum Shmemq_Error shmemq_init(
         return SHMEMQ_ERROR_FAILED_MMAP;
     }
 
-    shmemq->buffer->header.frames_count =
-        (size - sizeof(struct Shmemq_BufferHeader)) / SHMEMQ_FRAME_SIZE;
-
+    shmemq->buffer->header.frames_count = 0;
     shmemq->buffer->header.read_frame_index = 0;
     shmemq->buffer->header.write_frame_index = 0;
 
