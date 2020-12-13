@@ -97,7 +97,9 @@ enum Shmemq_Error shmemq_init(
         return SHMEMQ_ERROR_FAILED_MMAP;
     }
 
-    shmemq->buffer->header.frames_count = 0;
+    shmemq->buffer->header.frames_count =
+        (size - sizeof(struct Shmemq_BufferHeader)) / SHMEMQ_FRAME_SIZE;
+
     shmemq->buffer->header.read_frame_index = 0;
     shmemq->buffer->header.write_frame_index = 0;
 
