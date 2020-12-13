@@ -21,7 +21,7 @@ struct Shmemq *shmemq_new(
     struct Shmemq *const shmemq = malloc(sizeof(*shmemq));
 
     if (!shmemq) {
-        if (error_ptr) *error_ptr = SHMEMQ_ERROR_MALLOC;
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_MALLOC;
         return NULL;
     }
 
@@ -43,11 +43,11 @@ enum Shmemq_Error shmemq_init(
     const size_t size
 ) {
     if (strlen(name) > SHMEMQ_NAME_SLEN_MAX || name[0] != '/') {
-        return SHMEMQ_ERROR_NAME;
+        return SHMEMQ_ERROR_INVALID_NAME;
     }
 
     for (const char *chr = &name[1]; *chr; ++chr) {
-        if (*chr == '/') return SHMEMQ_ERROR_NAME;
+        if (*chr == '/') return SHMEMQ_ERROR_INVALID_NAME;
     }
 
     strcpy(shmemq->name, name);
@@ -60,13 +60,13 @@ enum Shmemq_Error shmemq_init(
         S_IRUSR | S_IWUSR
     );
 
-    if (shmemq->shm_id == -1) return SHMEMQ_ERROR_SHARED_MEMORY;
+    if (shmemq->shm_id == -1) return SHMEMQ_ERROR_FAILED_SHARED_MEMORY;
 
     struct stat statbuf;
 
     if (fstat(shmemq->shm_id, &statbuf) != 0) {
         shm_unlink(shmemq->name);
-        return SHMEMQ_ERROR_FSTAT;
+        return SHMEMQ_ERROR_FAILED_FSTAT;
     }
 
     const size_t min_size =
@@ -75,19 +75,19 @@ enum Shmemq_Error shmemq_init(
     if ((size_t)statbuf.st_size < min_size) {
         if (ftruncate(shmemq->shm_id, min_size) != 0) {
             shm_unlink(shmemq->name);
-            return SHMEMQ_ERROR_FTRUNCATE;
+            return SHMEMQ_ERROR_FAILED_FTRUNCATE;
         }
     }
 
     if (fstat(shmemq->shm_id, &statbuf) != 0) {
         shm_unlink(shmemq->name);
-        return SHMEMQ_ERROR_FSTAT;
+        return SHMEMQ_ERROR_FAILED_FSTAT;
     }
 
     if ((size_t)statbuf.st_size < size && !shmemq->is_consumer) {
         if (ftruncate(shmemq->shm_id, size) != 0) {
             shm_unlink(shmemq->name);
-            return SHMEMQ_ERROR_FTRUNCATE;
+            return SHMEMQ_ERROR_FAILED_FTRUNCATE;
         }
     }
 
