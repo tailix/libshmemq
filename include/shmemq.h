@@ -9,18 +9,18 @@
 
 // TODO: Resize buffer dynamically.
 // #define SHMEMQ_BUFFER_SIZE_MIN (sizeof(struct Shmemq_BufferHeader))
-#define SHMEMQ_BUFFER_SIZE_MIN (sizeof(struct Shmemq_BufferHeader) + 800)
+#define SHMEMQ_BUFFER_SIZE_MIN (sizeof(struct ShmemqBufferHeader) + 800)
 
 #define SHMEMQ_FRAME_SIZE ((size_t)8)
 
 #define SHMEMQ_FRAME_DATA_SIZE \
-    (SHMEMQ_FRAME_SIZE - sizeof(struct Shmemq_FrameHeader))
+    (SHMEMQ_FRAME_SIZE - sizeof(struct ShmemqFrameHeader))
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-enum Shmemq_Error {
+enum ShmemqError {
     SHMEMQ_ERROR_NONE = 0,
 
     SHMEMQ_ERROR_INVALID_NAME = 1,
@@ -34,50 +34,50 @@ enum Shmemq_Error {
     SHMEMQ_ERROR_FAILED_SHM_UNLINK = 249,
 };
 
-struct Shmemq_FrameHeader {
+struct ShmemqFrameHeader {
     size_t frame_size;
 };
 
-struct Shmemq_Frame {
-    struct Shmemq_FrameHeader header;
+struct ShmemqFrame {
+    struct ShmemqFrameHeader header;
     unsigned char data[SHMEMQ_FRAME_DATA_SIZE];
 };
 
-struct Shmemq_BufferHeader {
+struct ShmemqBufferHeader {
     bool is_ready;
     size_t frames_count;
     size_t read_frame_index;
     size_t write_frame_index;
 };
 
-struct Shmemq_Buffer {
-    struct Shmemq_BufferHeader header;
-    struct Shmemq_Frame frames[];
+struct ShmemqBuffer {
+    struct ShmemqBufferHeader header;
+    struct ShmemqFrame frames[];
 };
 
 typedef struct Shmemq {
     char name[SHMEMQ_NAME_SIZE_MAX];
     bool is_consumer;
     int shm_id;
-    struct Shmemq_Buffer *buffer;
+    struct ShmemqBuffer *buffer;
 } *Shmemq;
 
 Shmemq shmemq_new(
     const char *name,
     bool is_consumer,
-    enum Shmemq_Error *error_ptr
+    enum ShmemqError *error_ptr
 );
 
 void shmemq_init(
     Shmemq shmemq,
     const char *name,
     bool is_consumer,
-    enum Shmemq_Error *error_ptr
+    enum ShmemqError *error_ptr
 );
 
-void shmemq_delete(Shmemq shmemq, enum Shmemq_Error *error_ptr);
+void shmemq_delete(Shmemq shmemq, enum ShmemqError *error_ptr);
 
-void shmemq_finish(Shmemq shmemq, enum Shmemq_Error *error_ptr);
+void shmemq_finish(Shmemq shmemq, enum ShmemqError *error_ptr);
 
 #ifdef __cplusplus
 }

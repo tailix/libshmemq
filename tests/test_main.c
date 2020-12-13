@@ -8,7 +8,7 @@ static const char name[] = "/foobar";
 
 int main()
 {
-    enum Shmemq_Error error;
+    enum ShmemqError error;
 
     struct Shmemq consumer_shmemq;
     memset(&consumer_shmemq, 0, sizeof(consumer_shmemq));
