@@ -39,7 +39,9 @@ AC_CHECK_HEADERS([sys/stat.h])
 AC_CHECK_HEADERS([unistd.h])
 
 AC_CHECK_FUNCS([ftruncate])
+AC_CHECK_FUNCS([memset])
 AC_CHECK_FUNCS([munmap])
+AC_CHECK_FUNCS([strcmp])
 AC_CHECK_FUNCS([strcpy])
 AC_CHECK_FUNCS([strlen])
 

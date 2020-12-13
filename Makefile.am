@@ -9,7 +9,8 @@ AM_CFLAGS = \
 lib_LIBRARIES = libshmemq.a
 
 TESTS = \
-	tests/test_dummy
+	tests/test_dummy \
+	tests/test_init
 
 noinst_PROGRAMS = \
 	$(TESTS) \
@@ -29,3 +30,7 @@ examples_raw_sender_SOURCES = \
 tests_test_dummy_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	tests/test_dummy.c
+
+tests_test_init_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	tests/test_init.c
