@@ -141,3 +141,8 @@ void shmemq_init(
 
     if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
 }
+
+ShmemqFrame shmemq_push_start(const Shmemq shmemq)
+{
+    return &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
+}

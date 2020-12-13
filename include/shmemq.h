@@ -38,10 +38,10 @@ struct ShmemqFrameHeader {
     size_t frame_size;
 };
 
-struct ShmemqFrame {
+typedef struct ShmemqFrame {
     struct ShmemqFrameHeader header;
     unsigned char data[SHMEMQ_FRAME_DATA_SIZE];
-};
+} *ShmemqFrame;
 
 struct ShmemqBufferHeader {
     bool is_ready;
@@ -74,6 +74,8 @@ void shmemq_init(
 void shmemq_delete(Shmemq shmemq, ShmemqError *error_ptr);
 
 void shmemq_finish(Shmemq shmemq, ShmemqError *error_ptr);
+
+ShmemqFrame shmemq_push_start(Shmemq shmemq);
 
 #ifdef __cplusplus
 }
