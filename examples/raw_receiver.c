@@ -1,6 +1,8 @@
 #include "raw.h"
 
-#define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200809L
+
+#include <shmemq.h>
 
 #include <assert.h>
 #include <fcntl.h>
@@ -27,32 +29,15 @@ int main()
 {
     signal(SIGINT, signal_handler);
 
-    printf("Open shared memory objects.\n");
+    printf("Create queue.\n");
 
-    int buffer1_shm_id = shm_open(
-        "/buffer1",
-        O_CREAT | O_EXCL | O_RDWR,
-        S_IRUSR | S_IWUSR
-    );
+    enum Shmemq_Error shmemq_error;
+    struct Shmemq *shmemq = shmemq_new("/buffer1", true, &shmemq_error);
 
-    assert(buffer1_shm_id != -1);
+    assert(shmemq_error == SHMEMQ_ERROR_NONE);
+    assert(shmemq != NULL);
 
-    printf("Truncate shared memory objects.\n");
-
-    assert(ftruncate(buffer1_shm_id, BUFFER1_SIZE) == 0);
-
-    printf("Create memory mappings.\n");
-
-    struct Queue *const queue = mmap(
-        NULL,
-        BUFFER1_SIZE,
-        PROT_READ | PROT_WRITE,
-        MAP_SHARED,
-        buffer1_shm_id,
-        0
-    );
-
-    assert(queue != MAP_FAILED);
+    struct Queue *const queue = (void*)shmemq->buffer;
 
     printf("Initialize queues.\n");
 
@@ -99,13 +84,9 @@ int main()
         }
     }
 
-    printf("Destroy memory mappings.\n");
+    printf("Destroy queue.\n");
 
-    assert(munmap(queue, BUFFER1_SIZE) == 0);
-
-    printf("Unlink shared memory objects.\n");
-
-    assert(shm_unlink("/buffer1") == 0);
+    shmemq_delete(shmemq);
 
     return 0;
 }
