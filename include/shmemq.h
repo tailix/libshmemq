@@ -35,7 +35,7 @@ typedef enum ShmemqError {
 } ShmemqError;
 
 struct ShmemqFrameHeader {
-    size_t frame_size;
+    size_t message_frames_count;
 };
 
 typedef struct ShmemqFrame {

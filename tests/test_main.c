@@ -48,6 +48,19 @@ int main()
     consumer_shmemq.buffer->header.is_ready = true;
     assert(producer_shmemq->buffer->header.is_ready == true);
 
+    const ShmemqFrame frame = shmemq_push_start(producer_shmemq);
+    frame->header.message_frames_count = 1;
+    *(unsigned int*)frame->data = 123;
+    shmemq_push_end(producer_shmemq, frame);
+
+    assert(consumer_shmemq.buffer->header.read_frame_index == 0);
+    assert(consumer_shmemq.buffer->header.write_frame_index == 1);
+    assert(consumer_shmemq.buffer->frames[0].header.message_frames_count == 1);
+    assert(consumer_shmemq.buffer->frames[0].data[0] == 123);
+    assert(consumer_shmemq.buffer->frames[0].data[1] == 0);
+    assert(consumer_shmemq.buffer->frames[0].data[2] == 0);
+    assert(consumer_shmemq.buffer->frames[0].data[3] == 0);
+
     shmemq_finish(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
