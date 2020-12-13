@@ -78,7 +78,7 @@ enum Shmemq_Error shmemq_init(
 
     shmemq->shm_id = shm_open(
         shmemq->name,
-        O_CREAT | O_RDWR,
+        O_RDWR | (shmemq->is_consumer ? O_CREAT | O_EXCL : 0),
         S_IRUSR | S_IWUSR
     );
 
