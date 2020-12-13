@@ -1,6 +1,7 @@
 #ifndef SHMEMQ_INCLUDED
 #define SHMEMQ_INCLUDED 1
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
@@ -36,6 +37,7 @@ struct Shmemq_Buffer {
 
 struct Shmemq {
     char name[SHMEMQ_NAME_SIZE_MAX];
+    bool is_consumer;
     struct Shmemq_Buffer *buffer;
 };
 
