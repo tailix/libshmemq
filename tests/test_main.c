@@ -18,7 +18,9 @@ int main()
     assert(consumer_shmemq.shm_id != -1);
     assert(consumer_shmemq.buffer != NULL);
     assert(consumer_shmemq.buffer->header.is_ready == false);
-    assert(consumer_shmemq.buffer->header.frames_count == 0);
+    // TODO: Resize buffer dynamically.
+    // assert(consumer_shmemq.buffer->header.frames_count == 0);
+    assert(consumer_shmemq.buffer->header.frames_count == 100);
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 0);
 
@@ -33,7 +35,9 @@ int main()
     assert(producer_shmemq->shm_id != -1);
     assert(producer_shmemq->buffer != NULL);
     assert(producer_shmemq->buffer->header.is_ready == false);
-    assert(producer_shmemq->buffer->header.frames_count == 0);
+    // TODO: Resize buffer dynamically.
+    // assert(producer_shmemq->buffer->header.frames_count == 0);
+    assert(producer_shmemq->buffer->header.frames_count == 100);
     assert(producer_shmemq->buffer->header.read_frame_index == 0);
     assert(producer_shmemq->buffer->header.write_frame_index == 0);
 

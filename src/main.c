@@ -110,7 +110,11 @@ enum Shmemq_Error shmemq_init(
     // condition.
     if (shmemq->is_consumer) {
         shmemq->buffer->header.is_ready = false;
-        shmemq->buffer->header.frames_count = 0;
+
+        // TODO: Resize buffer dynamically.
+        // shmemq->buffer->header.frames_count = 0;
+        shmemq->buffer->header.frames_count = 100;
+
         shmemq->buffer->header.read_frame_index = 0;
         shmemq->buffer->header.write_frame_index = 0;
     }
