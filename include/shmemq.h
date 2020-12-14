@@ -77,7 +77,7 @@ void shmemq_finish(Shmemq shmemq, ShmemqError *error_ptr);
 
 ShmemqFrame shmemq_push_start(Shmemq shmemq);
 
-void shmemq_push_end(Shmemq shmemq, size_t data_size);
+void shmemq_push_end(Shmemq shmemq, size_t data_size, ShmemqError *error_ptr);
 
 #ifdef __cplusplus
 }

@@ -54,7 +54,9 @@ int main()
     assert(frame == &producer_shmemq->buffer->frames[0]);
 
     *(unsigned int*)frame->data = 123;
-    shmemq_push_end(producer_shmemq, sizeof(unsigned int));
+    shmemq_push_end(producer_shmemq, sizeof(unsigned int), &error);
+
+    assert(error == SHMEMQ_ERROR_NONE);
 
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 1);
@@ -69,7 +71,9 @@ int main()
     assert(frame == &producer_shmemq->buffer->frames[1]);
 
     *(unsigned int*)frame->data = 456;
-    shmemq_push_end(producer_shmemq, sizeof(unsigned int));
+    shmemq_push_end(producer_shmemq, sizeof(unsigned int), &error);
+
+    assert(error == SHMEMQ_ERROR_NONE);
 
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 2);
@@ -89,7 +93,9 @@ int main()
     assert(frame == &producer_shmemq->buffer->frames[2]);
 
     strcpy((char*)frame->data, hello_world_str);
-    shmemq_push_end(producer_shmemq, strlen(hello_world_str) + 1);
+    shmemq_push_end(producer_shmemq, strlen(hello_world_str) + 1, &error);
+
+    assert(error == SHMEMQ_ERROR_NONE);
 
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 4);
