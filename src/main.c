@@ -148,6 +148,18 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
         shmemq->buffer->header.write_frame_index >=
         shmemq->buffer->header.frames_count
     ) {
+        if (shmemq->buffer->header.read_frame_index > 0) {
+            shmemq->buffer->header.write_frame_index = 0;
+        }
+        else {
+            return NULL;
+        }
+    }
+
+    if (
+        shmemq->buffer->header.write_frame_index ==
+        shmemq->buffer->header.read_frame_index - 1
+    ) {
         return NULL;
     }
 
@@ -177,6 +189,14 @@ void shmemq_push_end(
     if (
         shmemq->buffer->header.write_frame_index >=
         shmemq->buffer->header.frames_count
+    ) {
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_BUG_PUSH_END_ON_FULL_QUEUE;
+        return;
+    }
+
+    if (
+        shmemq->buffer->header.write_frame_index ==
+        shmemq->buffer->header.read_frame_index - 1
     ) {
         if (error_ptr) *error_ptr = SHMEMQ_ERROR_BUG_PUSH_END_ON_FULL_QUEUE;
         return;

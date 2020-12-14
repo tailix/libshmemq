@@ -37,4 +37,5 @@
 /examples/raw_receiver
 /examples/raw_sender
 /tests/test_main
+/tests/test_prod_jumps_to_buffer_start_and_reaches_cons
 /tests/test_prod_reaches_buffer_end
