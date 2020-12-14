@@ -153,8 +153,23 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
     return &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
 }
 
-void shmemq_push_end(const Shmemq shmemq, const ShmemqFrame frame)
-{
+void shmemq_push_end(
+    const Shmemq shmemq,
+    const ShmemqFrame frame,
+    size_t data_size
+) {
+    const size_t header_and_data_size =
+        data_size + sizeof(struct ShmemqFrameHeader);
+
+    if (header_and_data_size % SHMEMQ_FRAME_SIZE == 0) {
+        frame->header.message_frames_count =
+            header_and_data_size / SHMEMQ_FRAME_SIZE;
+    }
+    else {
+        frame->header.message_frames_count =
+            header_and_data_size / SHMEMQ_FRAME_SIZE + 1;
+    }
+
     const size_t new_write_frame_index =
         shmemq->buffer->header.write_frame_index +
         frame->header.message_frames_count;
