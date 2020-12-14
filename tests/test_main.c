@@ -5,6 +5,7 @@
 #include <sys/mman.h>
 
 static const char name[] = "/foobar";
+static const char hello_world_str[] = "Hello, World!";
 
 int main()
 {
@@ -82,6 +83,33 @@ int main()
     assert(consumer_shmemq.buffer->frames[1].data[1] == 1);
     assert(consumer_shmemq.buffer->frames[1].data[2] == 0);
     assert(consumer_shmemq.buffer->frames[1].data[3] == 0);
+
+    frame = shmemq_push_start(producer_shmemq);
+
+    assert(frame == &producer_shmemq->buffer->frames[2]);
+
+    strcpy((char*)frame->data, hello_world_str);
+    shmemq_push_end(producer_shmemq, strlen(hello_world_str) + 1);
+
+    assert(consumer_shmemq.buffer->header.read_frame_index == 0);
+    assert(consumer_shmemq.buffer->header.write_frame_index == 4);
+    assert(consumer_shmemq.buffer->frames[0].header.message_frames_count == 1);
+    assert(consumer_shmemq.buffer->frames[0].data[0] == 123);
+    assert(consumer_shmemq.buffer->frames[0].data[1] == 0);
+    assert(consumer_shmemq.buffer->frames[0].data[2] == 0);
+    assert(consumer_shmemq.buffer->frames[0].data[3] == 0);
+    assert(consumer_shmemq.buffer->frames[1].header.message_frames_count == 1);
+    assert(consumer_shmemq.buffer->frames[1].data[0] == 200);
+    assert(consumer_shmemq.buffer->frames[1].data[1] == 1);
+    assert(consumer_shmemq.buffer->frames[1].data[2] == 0);
+    assert(consumer_shmemq.buffer->frames[1].data[3] == 0);
+    assert(consumer_shmemq.buffer->frames[2].header.message_frames_count == 2);
+    assert(
+        strcmp(
+            (char*)consumer_shmemq.buffer->frames[2].data,
+            hello_world_str
+        ) == 0
+    );
 
     shmemq_finish(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
