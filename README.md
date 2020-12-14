@@ -141,13 +141,13 @@ Consumer pops more:
               V
 ```
 
-Producer pushes long message:
+Producer pushes one short and one long message:
 
 ```
                                   |
  ___ ___ ___ ___ ___ ___ ___ ___ _V_ ___
-|   |   |   |14 |15             |   |   |
-|___|___|___|___|___ ___ ___ ___|___|___|
+|   |   |   |14 |15         |16 |   |   |
+|___|___|___|___|___ ___ ___|___|___|___|
               |
               V
 ```
@@ -157,10 +157,39 @@ Consumer pops one short and one long message:
 ```
                                   |
  ___ ___ ___ ___ ___ ___ ___ ___ _V_ ___
-|   |   |   |   |   |   |   |   |   |   |
+|   |   |   |   |   |   |   |16 |   |   |
 |___|___|___|___|___|___|___|___|___|___|
-                                  |
-                                  V
+                              |
+                              V
+```
+
+Producer is in trouble now. He wants to send a long message, but he is
+positioned at the second half of the buffer. The situation is complicated by the
+fact that the size of the message may not be known in advance (stream-like
+message queuing). To reduce the likelihood of it stalling due to lack of space,
+it chooses whether to write to the current position or to the beginning of the
+buffer, depending on where there is more free space at the moment. He compares
+the following values:
+
+* `Size of the buffer - Current position of the producer`
+* `Current position of the consumer`
+
+In our example, the second one is greater (remember that indices start with
+zero):
+
+```
+                           10 - 8 = 2
+                                   _A_
+                                  /   \
+                                  |   |
+ ___ ___ ___ ___ ___ ___ ___ ___ _V_ _|_
+|   |   |   |   |   |   |   |16 |   |   |
+|___|___|___|___|___|___|___|___|___|___|
+  |                       |   |
+  |                       |   V
+  \____________ __________/
+               V
+       7 - 0 = 7
 ```
 
 
