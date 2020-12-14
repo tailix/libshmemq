@@ -11,6 +11,7 @@ lib_LIBRARIES = libshmemq.a
 TESTS = \
 	tests/test_main \
 	tests/test_cons_pops_buffer_start \
+	tests/test_cons_reaches_queue_end \
 	tests/test_prod_jumps_to_buffer_start_and_reaches_cons \
 	tests/test_prod_reaches_buffer_end
 
@@ -36,6 +37,10 @@ tests_test_main_SOURCES = \
 tests_test_cons_pops_buffer_start_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	tests/test_cons_pops_buffer_start.c
+
+tests_test_cons_reaches_queue_end_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	tests/test_cons_reaches_queue_end.c
 
 tests_test_prod_jumps_to_buffer_start_and_reaches_cons_SOURCES = \
 	$(libshmemq_a_SOURCES) \
