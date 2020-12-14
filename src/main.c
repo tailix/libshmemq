@@ -144,13 +144,20 @@ void shmemq_init(
 
 ShmemqFrame shmemq_push_start(const Shmemq shmemq)
 {
+    const ShmemqFrame low_frame  = &shmemq->buffer->frames[0];
+    const ShmemqFrame high_frame = &shmemq->buffer->frames[
+        shmemq->buffer->header.write_frame_index
+    ];
+
     const size_t half_frames_count = shmemq->buffer->header.frames_count / 2;
 
-    if (shmemq->buffer->header.read_frame_index > half_frames_count) {
-        shmemq->buffer->header.write_frame_index = 0;
+    if (shmemq->buffer->header.read_frame_index <= half_frames_count) {
+        return high_frame;
     }
 
-    return &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
+    high_frame->header.message_frames_count = 0;
+    shmemq->buffer->header.write_frame_index = 0;
+    return low_frame;
 }
 
 void shmemq_push_end(
