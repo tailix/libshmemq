@@ -196,6 +196,11 @@ void shmemq_push_end(
 
 ShmemqFrame shmemq_pop_start(const Shmemq shmemq)
 {
+    if (
+        shmemq->buffer->header.read_frame_index ==
+        shmemq->buffer->header.write_frame_index
+    ) return NULL;
+
     return &shmemq->buffer->frames[shmemq->buffer->header.read_frame_index];
 }
 

@@ -159,6 +159,10 @@ int main()
     assert(error == SHMEMQ_ERROR_NONE);
     assert(producer_shmemq->buffer->header.read_frame_index == 4);
 
+    assert(shmemq_pop_start(&consumer_shmemq) == NULL);
+    shmemq_pop_end(&consumer_shmemq, &error);
+    assert(error == SHMEMQ_ERROR_BUG_POP_END_ON_EMPTY_QUEUE);
+
     shmemq_finish(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
