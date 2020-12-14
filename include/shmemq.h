@@ -11,7 +11,7 @@
 // #define SHMEMQ_BUFFER_SIZE_MIN (sizeof(struct Shmemq_BufferHeader))
 #define SHMEMQ_BUFFER_SIZE_MIN (sizeof(struct ShmemqBufferHeader) + 800)
 
-#define SHMEMQ_FRAME_SIZE ((size_t)8)
+#define SHMEMQ_FRAME_SIZE ((size_t)16)
 
 #define SHMEMQ_FRAME_DATA_SIZE \
     (SHMEMQ_FRAME_SIZE - sizeof(struct ShmemqFrameHeader))
