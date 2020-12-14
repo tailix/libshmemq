@@ -7,15 +7,6 @@
 extern "C" {
 #endif
 
-static const size_t BUFFER1_SIZE  = 200;
-static const long   BUFFER1_MAGIC = 0xCAFEBABE;
-
-struct Queue {
-    size_t read_offset;
-
-    unsigned char data[];
-};
-
 enum MessageType {
     FINISH,
     ONEBYTE,
@@ -23,10 +14,7 @@ enum MessageType {
 };
 
 struct Message {
-    long magic;
-    size_t size;
     enum MessageType type;
-
     unsigned char data[];
 };
 

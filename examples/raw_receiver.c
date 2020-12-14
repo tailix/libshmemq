@@ -37,35 +37,18 @@ int main()
     assert(shmemq_error == SHMEMQ_ERROR_NONE);
     assert(shmemq != NULL);
 
-    struct Queue *const queue = (void*)shmemq->buffer;
-
-    printf("Initialize queues.\n");
-
-    queue->read_offset = 0;
-
     printf("Main loop.\n");
 
     while (running) {
-        const struct Message *const message = (struct Message*)queue->data + queue->read_offset;
+        const ShmemqFrame frame = shmemq_pop_start(shmemq);
 
-        if (message->magic != BUFFER1_MAGIC) {
+        if (frame == NULL) {
             printf("No messages.\n");
             sleep(1);
             continue;
         }
 
-        if (message->size > BUFFER1_SIZE - sizeof(struct Queue)) {
-            printf("Message too big.\n");
-            break;
-        }
-
-        if (message->size > BUFFER1_SIZE - sizeof(struct Queue) - queue->read_offset) {
-            printf("Buffer return.\n");
-            queue->read_offset = 0;
-            continue;
-        }
-
-        queue->read_offset += message->size;
+        const struct Message *const message = (struct Message*)frame->data;
 
         switch (message->type) {
         case FINISH:
@@ -81,6 +64,13 @@ int main()
         default:
             printf("Invalid message.\n");
             running = false;
+        }
+
+        shmemq_pop_end(shmemq, &shmemq_error);
+
+        if (shmemq_error != SHMEMQ_ERROR_NONE) {
+            printf("Error: %u.\n", shmemq_error);
+            break;
         }
     }
 
