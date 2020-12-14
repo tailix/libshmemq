@@ -144,6 +144,13 @@ void shmemq_init(
 
 ShmemqFrame shmemq_push_start(const Shmemq shmemq)
 {
+    if (
+        shmemq->buffer->header.write_frame_index >=
+        shmemq->buffer->header.frames_count
+    ) {
+        return NULL;
+    }
+
     const ShmemqFrame low_frame  = &shmemq->buffer->frames[0];
     const ShmemqFrame high_frame = &shmemq->buffer->frames[
         shmemq->buffer->header.write_frame_index
@@ -167,6 +174,14 @@ void shmemq_push_end(
 ) {
     if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
 
+    if (
+        shmemq->buffer->header.write_frame_index >=
+        shmemq->buffer->header.frames_count
+    ) {
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_BUG_PUSH_END_ON_FULL_QUEUE;
+        return;
+    }
+
     const ShmemqFrame frame =
         &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
 
@@ -186,7 +201,10 @@ void shmemq_push_end(
         shmemq->buffer->header.write_frame_index +
         frame->header.message_frames_count;
 
-    if (new_write_frame_index >= shmemq->buffer->header.frames_count) {
+    if (
+        new_write_frame_index >= shmemq->buffer->header.frames_count &&
+        shmemq->buffer->header.read_frame_index > 0
+    ) {
         shmemq->buffer->header.write_frame_index = 0;
     }
     else {

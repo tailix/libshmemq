@@ -28,6 +28,7 @@ typedef enum ShmemqError {
 
     // Bugs in user code.
     SHMEMQ_ERROR_BUG_POP_END_ON_EMPTY_QUEUE = 50,
+    SHMEMQ_ERROR_BUG_PUSH_END_ON_FULL_QUEUE = 51,
 
     // Failed system calls.
     SHMEMQ_ERROR_FAILED_MALLOC     = 100,
