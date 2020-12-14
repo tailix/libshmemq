@@ -201,7 +201,20 @@ ShmemqFrame shmemq_pop_start(const Shmemq shmemq)
         shmemq->buffer->header.write_frame_index
     ) return NULL;
 
-    return &shmemq->buffer->frames[shmemq->buffer->header.read_frame_index];
+    const ShmemqFrame low_frame  = &shmemq->buffer->frames[0];
+    const ShmemqFrame high_frame = &shmemq->buffer->frames[
+        shmemq->buffer->header.read_frame_index
+    ];
+
+    if (
+        shmemq->buffer->header.read_frame_index <
+        shmemq->buffer->header.write_frame_index ||
+        high_frame->header.message_frames_count != 0
+    ) {
+        return high_frame;
+    }
+
+    return low_frame;
 }
 
 void shmemq_pop_end(const Shmemq shmemq, ShmemqError *const error_ptr)
