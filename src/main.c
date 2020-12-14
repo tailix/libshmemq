@@ -137,6 +137,7 @@ void shmemq_init(
 
         shmemq->buffer->header.read_frame_index = 0;
         shmemq->buffer->header.write_frame_index = 0;
+        shmemq->buffer->header.jumped = false;
     }
 
     if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
@@ -150,6 +151,7 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
     ) {
         if (shmemq->buffer->header.read_frame_index > 0) {
             shmemq->buffer->header.write_frame_index = 0;
+            shmemq->buffer->header.jumped = true;
         }
         else {
             return NULL;
@@ -157,8 +159,9 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
     }
 
     if (
+        shmemq->buffer->header.jumped &&
         shmemq->buffer->header.write_frame_index ==
-        shmemq->buffer->header.read_frame_index - 1
+        shmemq->buffer->header.read_frame_index
     ) {
         return NULL;
     }
@@ -176,6 +179,7 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
 
     high_frame->header.message_frames_count = 0;
     shmemq->buffer->header.write_frame_index = 0;
+    shmemq->buffer->header.jumped = true;
     return low_frame;
 }
 
@@ -195,8 +199,9 @@ void shmemq_push_end(
     }
 
     if (
+        shmemq->buffer->header.jumped &&
         shmemq->buffer->header.write_frame_index ==
-        shmemq->buffer->header.read_frame_index - 1
+        shmemq->buffer->header.read_frame_index
     ) {
         if (error_ptr) *error_ptr = SHMEMQ_ERROR_BUG_PUSH_END_ON_FULL_QUEUE;
         return;
@@ -217,24 +222,15 @@ void shmemq_push_end(
             header_and_data_size / SHMEMQ_FRAME_SIZE + 1;
     }
 
-    const size_t new_write_frame_index =
+    shmemq->buffer->header.write_frame_index =
         shmemq->buffer->header.write_frame_index +
         frame->header.message_frames_count;
-
-    if (
-        new_write_frame_index >= shmemq->buffer->header.frames_count &&
-        shmemq->buffer->header.read_frame_index > 0
-    ) {
-        shmemq->buffer->header.write_frame_index = 0;
-    }
-    else {
-        shmemq->buffer->header.write_frame_index = new_write_frame_index;
-    }
 }
 
 ShmemqFrame shmemq_pop_start(const Shmemq shmemq)
 {
     if (
+        !shmemq->buffer->header.jumped &&
         shmemq->buffer->header.read_frame_index ==
         shmemq->buffer->header.write_frame_index
     ) return NULL;
@@ -260,6 +256,7 @@ void shmemq_pop_end(const Shmemq shmemq, ShmemqError *const error_ptr)
     if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
 
     if (
+        !shmemq->buffer->header.jumped &&
         shmemq->buffer->header.read_frame_index ==
         shmemq->buffer->header.write_frame_index
     ) {
@@ -282,4 +279,5 @@ void shmemq_pop_end(const Shmemq shmemq, ShmemqError *const error_ptr)
     }
 
     shmemq->buffer->header.read_frame_index = 0;
+    shmemq->buffer->header.jumped = false;
 }
