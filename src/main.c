@@ -153,11 +153,11 @@ ShmemqFrame shmemq_push_start(const Shmemq shmemq)
     return &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
 }
 
-void shmemq_push_end(
-    const Shmemq shmemq,
-    const ShmemqFrame frame,
-    size_t data_size
-) {
+void shmemq_push_end(const Shmemq shmemq, size_t data_size)
+{
+    const ShmemqFrame frame =
+        &shmemq->buffer->frames[shmemq->buffer->header.write_frame_index];
+
     const size_t header_and_data_size =
         data_size + sizeof(struct ShmemqFrameHeader);
 

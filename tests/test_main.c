@@ -53,7 +53,7 @@ int main()
     assert(frame == &producer_shmemq->buffer->frames[0]);
 
     *(unsigned int*)frame->data = 123;
-    shmemq_push_end(producer_shmemq, frame, sizeof(unsigned int));
+    shmemq_push_end(producer_shmemq, sizeof(unsigned int));
 
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 1);
@@ -68,7 +68,7 @@ int main()
     assert(frame == &producer_shmemq->buffer->frames[1]);
 
     *(unsigned int*)frame->data = 456;
-    shmemq_push_end(producer_shmemq, frame, sizeof(unsigned int));
+    shmemq_push_end(producer_shmemq, sizeof(unsigned int));
 
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 2);
