@@ -192,6 +192,83 @@ zero):
        7 - 0 = 7
 ```
 
+So producer makes himself to point to the beginning of the buffer.
+
+**NOTICE**: It marks the frame it pointed to earlier in a special way (indicated
+with `*`).  Remember this fact, we'll use it in future.
+
+```
+  |
+ _V_ ___ ___ ___ ___ ___ ___ ___ ___ ___
+|   |   |   |   |   |   |   |16 |*  |   |
+|___|___|___|___|___|___|___|___|___|___|
+                              |
+                              V
+```
+
+Consumer pops one message:
+
+```
+  |
+ _V_ ___ ___ ___ ___ ___ ___ ___ ___ ___
+|   |   |   |   |   |   |   |   |*  |   |
+|___|___|___|___|___|___|___|___|___|___|
+                                  |
+                                  V
+```
+
+Producer pushes one message:
+
+```
+      |
+ ___ _V_ ___ ___ ___ ___ ___ ___ ___ ___
+|17 |   |   |   |   |   |   |   |*  |   |
+|___|___|___|___|___|___|___|___|___|___|
+                                  |
+                                  V
+```
+
+Consumer is also in trouble now: how can he understand if he should try to read
+next frame or go the beginning of the buffer? We can differentiate those
+situations because we indicate consumed messages with no number, but in reality
+corresponding frames contain grabage.
+
+But why not to fill those frames with special value? First frame of a message
+contains the number of frames in the message. It can't be zero. Can we set it to
+zero for consumed frames?
+
+Let's start with a caution. Message can consist of multiple frames, and only the
+first one will have such attribute. Can we guarantee that consumer is pointed to
+the frame which was the first frame of some consumed message? No, we can't.
+
+However we can overwrite garbage when producer decides to start from the
+beginning of the buffer. Do you remember the **NOTICE**? We only consider this
+when position of producer is less than position of consumer. In this case if we
+see frame with size greater than zero, it unequivocally signs that there is a
+message, not a garbage.
+
+Consumer makes himself to point to the beginning of the buffer:
+
+```
+      |
+ ___ _V_ ___ ___ ___ ___ ___ ___ ___ ___
+|17 |   |   |   |   |   |   |   |   |   |
+|___|___|___|___|___|___|___|___|___|___|
+  |
+  V
+```
+
+Consumer pops one message:
+
+```
+      |
+ ___ _V_ ___ ___ ___ ___ ___ ___ ___ ___
+|   |   |   |   |   |   |   |   |   |   |
+|___|___|___|___|___|___|___|___|___|___|
+      |
+      V
+```
+
 
 
 External links
