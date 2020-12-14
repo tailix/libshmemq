@@ -117,6 +117,48 @@ int main()
         ) == 0
     );
 
+    frame = shmemq_pop_start(&consumer_shmemq);
+
+    assert(frame == &consumer_shmemq.buffer->frames[0]);
+    assert(producer_shmemq->buffer->header.read_frame_index == 0);
+    assert(frame->header.message_frames_count == 1);
+    assert(frame->data[0] == 123);
+    assert(frame->data[1] == 0);
+    assert(frame->data[2] == 0);
+    assert(frame->data[3] == 0);
+
+    shmemq_pop_end(&consumer_shmemq, &error);
+
+    assert(error == SHMEMQ_ERROR_NONE);
+    assert(producer_shmemq->buffer->header.read_frame_index == 1);
+
+    frame = shmemq_pop_start(&consumer_shmemq);
+
+    assert(frame == &consumer_shmemq.buffer->frames[1]);
+    assert(producer_shmemq->buffer->header.read_frame_index == 1);
+    assert(frame->header.message_frames_count == 1);
+    assert(frame->data[0] == 200);
+    assert(frame->data[1] == 1);
+    assert(frame->data[2] == 0);
+    assert(frame->data[3] == 0);
+
+    shmemq_pop_end(&consumer_shmemq, &error);
+
+    assert(error == SHMEMQ_ERROR_NONE);
+    assert(producer_shmemq->buffer->header.read_frame_index == 2);
+
+    frame = shmemq_pop_start(&consumer_shmemq);
+
+    assert(frame == &consumer_shmemq.buffer->frames[2]);
+    assert(producer_shmemq->buffer->header.read_frame_index == 2);
+    assert(frame->header.message_frames_count == 2);
+    assert(strcmp((char*)frame->data, hello_world_str) == 0);
+
+    shmemq_pop_end(&consumer_shmemq, &error);
+
+    assert(error == SHMEMQ_ERROR_NONE);
+    assert(producer_shmemq->buffer->header.read_frame_index == 4);
+
     shmemq_finish(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 

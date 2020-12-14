@@ -193,3 +193,37 @@ void shmemq_push_end(
         shmemq->buffer->header.write_frame_index = new_write_frame_index;
     }
 }
+
+ShmemqFrame shmemq_pop_start(const Shmemq shmemq)
+{
+    return &shmemq->buffer->frames[shmemq->buffer->header.read_frame_index];
+}
+
+void shmemq_pop_end(const Shmemq shmemq, ShmemqError *const error_ptr)
+{
+    if (error_ptr) *error_ptr = SHMEMQ_ERROR_NONE;
+
+    if (
+        shmemq->buffer->header.read_frame_index ==
+        shmemq->buffer->header.write_frame_index
+    ) {
+        *error_ptr = SHMEMQ_ERROR_BUG_POP_END_ON_EMPTY_QUEUE;
+        return;
+    }
+
+    const ShmemqFrame frame =
+        &shmemq->buffer->frames[shmemq->buffer->header.read_frame_index];
+
+    if (
+        shmemq->buffer->header.read_frame_index <
+        shmemq->buffer->header.write_frame_index ||
+        frame->header.message_frames_count != 0
+    ) {
+        shmemq->buffer->header.read_frame_index +=
+            frame->header.message_frames_count;
+
+        return;
+    }
+
+    shmemq->buffer->header.read_frame_index = 0;
+}

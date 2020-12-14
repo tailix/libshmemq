@@ -25,6 +25,8 @@ typedef enum ShmemqError {
 
     SHMEMQ_ERROR_INVALID_NAME = 1,
 
+    SHMEMQ_ERROR_BUG_POP_END_ON_EMPTY_QUEUE = 50,
+
     SHMEMQ_ERROR_FAILED_MALLOC     = 255,
     SHMEMQ_ERROR_FAILED_SHM_OPEN   = 254,
     SHMEMQ_ERROR_FAILED_FTRUNCATE  = 253,
@@ -78,6 +80,10 @@ void shmemq_finish(Shmemq shmemq, ShmemqError *error_ptr);
 ShmemqFrame shmemq_push_start(Shmemq shmemq);
 
 void shmemq_push_end(Shmemq shmemq, size_t data_size, ShmemqError *error_ptr);
+
+ShmemqFrame shmemq_pop_start(Shmemq shmemq);
+
+void shmemq_pop_end(Shmemq shmemq, ShmemqError *error_ptr);
 
 #ifdef __cplusplus
 }
