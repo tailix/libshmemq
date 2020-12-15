@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include <shmemq.h>
 
 #include <assert.h>
@@ -6,6 +8,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
 static const char name[] = "/foobar";
@@ -34,7 +37,13 @@ int main()
             const ShmemqFrame frame = shmemq_pop_start(consumer);
 
             if (frame == NULL) {
-                sleep(1);
+                struct timespec tspec;
+                const int clock_result = clock_gettime(CLOCK_REALTIME, &tspec);
+                assert(clock_result == 0);
+
+                tspec.tv_nsec += 1000;
+
+                sem_timedwait(&consumer->buffer->header.read_sem, &tspec);
                 continue;
             }
 
@@ -53,13 +62,22 @@ int main()
 
             shmemq_pop_end(consumer, &error);
             assert(error == SHMEMQ_ERROR_NONE);
+
+            int sem_value;
+            const int sem_getvalue_result =
+                sem_getvalue(&consumer->buffer->header.write_sem, &sem_value);
+            assert(sem_getvalue_result == 0);
+
+            if (sem_value == 0) {
+                const int sem_post_result =
+                    sem_post(&consumer->buffer->header.write_sem);
+                assert(sem_post_result == 0);
+            }
         }
     }
     else {
         atexit(on_exit);
         signal(SIGABRT, on_signal);
-
-        sleep(1);
 
         producer = shmemq_new(name, false, &error);
         assert(error == SHMEMQ_ERROR_NONE);
@@ -68,7 +86,13 @@ int main()
             const ShmemqFrame frame = shmemq_push_start(producer);
 
             if (frame == NULL) {
-                sleep(1);
+                struct timespec tspec;
+                const int clock_result = clock_gettime(CLOCK_REALTIME, &tspec);
+                assert(clock_result == 0);
+
+                tspec.tv_nsec += 1000;
+
+                sem_timedwait(&producer->buffer->header.write_sem, &tspec);
                 continue;
             }
 
@@ -84,6 +108,17 @@ int main()
 
             shmemq_push_end(producer, sizeof(unsigned), &error);
             assert(error == SHMEMQ_ERROR_NONE);
+
+            int sem_value;
+            const int sem_getvalue_result =
+                sem_getvalue(&producer->buffer->header.read_sem, &sem_value);
+            assert(sem_getvalue_result == 0);
+
+            if (sem_value == 0) {
+                const int sem_post_result =
+                    sem_post(&producer->buffer->header.read_sem);
+                assert(sem_post_result == 0);
+            }
         }
     }
 

@@ -39,6 +39,7 @@ AC_CHECK_HEADERS([sys/mman.h])
 AC_CHECK_HEADERS([sys/stat.h])
 AC_CHECK_HEADERS([sys/types.h])
 AC_CHECK_HEADERS([sys/wait.h])
+AC_CHECK_HEADERS([time.h])
 AC_CHECK_HEADERS([unistd.h])
 
 AC_CHECK_FUNCS([close])
@@ -53,7 +54,10 @@ AC_CHECK_FUNCS([strcpy])
 AC_CHECK_FUNCS([strlen])
 AC_CHECK_FUNCS([waitpid])
 
+AC_SEARCH_LIBS([sem_getvalue], [pthread])
 AC_SEARCH_LIBS([sem_init], [pthread])
+AC_SEARCH_LIBS([sem_post], [pthread])
+AC_SEARCH_LIBS([sem_timedwait], [pthread])
 AC_SEARCH_LIBS([shm_open], [rt])
 AC_SEARCH_LIBS([shm_unlink], [rt])
 
