@@ -34,7 +34,7 @@ int main()
         assert(error == SHMEMQ_ERROR_NONE);
     }
 
-    for (unsigned i = 0; i < 10; ++i) {
+    for (unsigned i = 0; i < 9; ++i) {
         const ShmemqFrame frame = shmemq_push_start(producer);
         assert(frame != NULL);
 

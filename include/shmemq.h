@@ -54,7 +54,6 @@ struct ShmemqBufferHeader {
     size_t frames_count;
     size_t read_frame_index;
     size_t write_frame_index;
-    bool jumped;
 };
 
 struct ShmemqBuffer {
