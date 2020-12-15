@@ -217,9 +217,21 @@ void shmemq_push_end(
             header_and_data_size / SHMEMQ_FRAME_SIZE + 1;
     }
 
-    shmemq->buffer->header.write_frame_index =
+    const size_t new_write_frame_index =
         shmemq->buffer->header.write_frame_index +
         frame->header.message_frames_count;
+
+    if (
+        shmemq->buffer->header.write_frame_index <
+        shmemq->buffer->header.read_frame_index &&
+        new_write_frame_index >=
+        shmemq->buffer->header.read_frame_index
+    ) {
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_BUG_PUSH_END_OVERFLOW;
+        return;
+    }
+
+    shmemq->buffer->header.write_frame_index = new_write_frame_index;
 }
 
 ShmemqFrame shmemq_pop_start(const Shmemq shmemq)
