@@ -4,14 +4,17 @@
 
 static const char name[] = "/foobar";
 
+static Shmemq consumer = NULL;
+static Shmemq producer = NULL;
+
 int main()
 {
     ShmemqError error;
 
-    const Shmemq consumer = shmemq_new(name, true, &error);
+    consumer = shmemq_new(name, true, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
-    const Shmemq producer = shmemq_new(name, false, &error);
+    producer = shmemq_new(name, false, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
     for (unsigned i = 0; i < 100; ++i) {
@@ -50,10 +53,10 @@ int main()
     shmemq_push_end(producer, 9, &error);
     assert(error == SHMEMQ_ERROR_BUG_PUSH_END_OVERFLOW);
 
-    shmemq_delete(consumer, &error);
+    SHMEMQ_DELETE(consumer, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
-    shmemq_delete(producer, &error);
+    SHMEMQ_DELETE(producer, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
     return 0;

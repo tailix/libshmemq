@@ -90,7 +90,7 @@ int main()
 finalize:
     printf("Destroy queue.\n");
 
-    shmemq_delete(shmemq, NULL);
+    SHMEMQ_DELETE(shmemq, NULL);
 
     return 0;
 }

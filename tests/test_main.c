@@ -7,6 +7,8 @@
 static const char name[] = "/foobar";
 static const char hello_world_str[] = "Hello, World!";
 
+static Shmemq producer_shmemq = NULL;
+
 int main()
 {
     ShmemqError error;
@@ -28,7 +30,7 @@ int main()
     assert(consumer_shmemq.buffer->header.read_frame_index == 0);
     assert(consumer_shmemq.buffer->header.write_frame_index == 0);
 
-    const Shmemq producer_shmemq = shmemq_new(name, false, &error);
+    producer_shmemq = shmemq_new(name, false, &error);
 
     assert(producer_shmemq != NULL);
     assert(error == SHMEMQ_ERROR_NONE);
@@ -166,7 +168,7 @@ int main()
     shmemq_finish(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
-    shmemq_delete(producer_shmemq, &error);
+    SHMEMQ_DELETE(producer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
     return 0;

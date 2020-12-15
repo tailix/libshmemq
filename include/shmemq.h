@@ -4,6 +4,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define SHMEMQ_DELETE(shmemq, error_ptr) { \
+    shmemq_delete(shmemq, error_ptr);      \
+    shmemq = NULL;                         \
+}
+
 #define SHMEMQ_NAME_SIZE_MAX ((size_t)255)
 #define SHMEMQ_NAME_SLEN_MAX (SHMEMQ_NAME_SIZE_MAX - 1)
 
