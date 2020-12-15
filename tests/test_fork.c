@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -41,6 +42,13 @@ int main()
 
             const unsigned data = *(unsigned*)frame->data;
 
+            printf(
+                "[CONSUMER] index: %u; data: %u; frame: %p\n",
+                index,
+                data,
+                frame
+            );
+
             assert(data == index);
 
             shmemq_pop_end(consumer, &error);
@@ -67,6 +75,12 @@ int main()
             ++index;
 
             *(unsigned*)frame->data = index;
+
+            printf(
+                "[PRODUCER] index: %u; frame: %p\n",
+                index,
+                frame
+            );
 
             shmemq_push_end(producer, sizeof(unsigned), &error);
             assert(error == SHMEMQ_ERROR_NONE);
