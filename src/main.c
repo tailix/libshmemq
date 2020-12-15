@@ -222,10 +222,13 @@ void shmemq_push_end(
         frame->header.message_frames_count;
 
     if (
-        shmemq->buffer->header.write_frame_index <
-        shmemq->buffer->header.read_frame_index &&
-        new_write_frame_index >=
-        shmemq->buffer->header.read_frame_index
+        new_write_frame_index >
+        shmemq->buffer->header.frames_count || (
+            shmemq->buffer->header.write_frame_index <
+            shmemq->buffer->header.read_frame_index &&
+            new_write_frame_index >=
+            shmemq->buffer->header.read_frame_index
+        )
     ) {
         if (error_ptr) *error_ptr = SHMEMQ_ERROR_BUG_PUSH_END_OVERFLOW;
         return;
