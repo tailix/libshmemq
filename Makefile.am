@@ -10,6 +10,7 @@ lib_LIBRARIES = libshmemq.a
 
 TESTS = \
 	tests/test_main \
+	tests/test_alternatively_push_and_pop_one_frame_messages_with_jump \
 	tests/test_cons_pops_buffer_start \
 	tests/test_cons_reaches_queue_end \
 	tests/test_prod_jumps_to_buffer_start_and_pushes_too_long_message \
@@ -32,6 +33,10 @@ examples_raw_receiver_SOURCES = \
 examples_raw_sender_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	examples/raw_sender.c
+
+tests_test_alternatively_push_and_pop_one_frame_messages_with_jump_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	tests/test_alternatively_push_and_pop_one_frame_messages_with_jump.c
 
 tests_test_main_SOURCES = \
 	$(libshmemq_a_SOURCES) \
