@@ -1,15 +1,22 @@
 #include <shmemq.h>
 
 #include <assert.h>
+#include <signal.h>
+#include <stdlib.h>
 
 static const char name[] = "/foobar";
 
+static ShmemqError error = SHMEMQ_ERROR_NONE;
 static Shmemq consumer = NULL;
 static Shmemq producer = NULL;
 
+static void on_exit();
+static void on_signal(int signo);
+
 int main()
 {
-    ShmemqError error;
+    atexit(on_exit);
+    signal(SIGABRT, on_signal);
 
     consumer = shmemq_new(name, true, &error);
     assert(error == SHMEMQ_ERROR_NONE);
@@ -53,11 +60,23 @@ int main()
     shmemq_push_end(producer, 9, &error);
     assert(error == SHMEMQ_ERROR_BUG_PUSH_END_OVERFLOW);
 
-    SHMEMQ_DELETE(consumer, &error);
-    assert(error == SHMEMQ_ERROR_NONE);
-
-    SHMEMQ_DELETE(producer, &error);
-    assert(error == SHMEMQ_ERROR_NONE);
-
     return 0;
+}
+
+void on_exit()
+{
+    if (consumer) {
+        SHMEMQ_DELETE(consumer, &error);
+        assert(error == SHMEMQ_ERROR_NONE);
+    }
+
+    if (producer) {
+        SHMEMQ_DELETE(producer, &error);
+        assert(error == SHMEMQ_ERROR_NONE);
+    }
+}
+
+void on_signal(const int signo __attribute__((unused)))
+{
+    on_exit();
 }

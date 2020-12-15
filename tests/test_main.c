@@ -1,19 +1,26 @@
 #include <shmemq.h>
 
 #include <assert.h>
+#include <signal.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 
 static const char name[] = "/foobar";
 static const char hello_world_str[] = "Hello, World!";
 
+static ShmemqError error = SHMEMQ_ERROR_NONE;
+static struct Shmemq consumer_shmemq;
 static Shmemq producer_shmemq = NULL;
+
+static void on_exit();
+static void on_signal(int signo);
 
 int main()
 {
-    ShmemqError error;
+    atexit(on_exit);
+    signal(SIGABRT, on_signal);
 
-    struct Shmemq consumer_shmemq;
     memset(&consumer_shmemq, 0, sizeof(consumer_shmemq));
 
     shmemq_init(&consumer_shmemq, name, true, &error);
@@ -165,11 +172,21 @@ int main()
     shmemq_pop_end(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_BUG_POP_END_ON_EMPTY_QUEUE);
 
+    return 0;
+}
+
+void on_exit()
+{
     shmemq_finish(&consumer_shmemq, &error);
     assert(error == SHMEMQ_ERROR_NONE);
 
-    SHMEMQ_DELETE(producer_shmemq, &error);
-    assert(error == SHMEMQ_ERROR_NONE);
+    if (producer_shmemq) {
+        SHMEMQ_DELETE(producer_shmemq, &error);
+        assert(error == SHMEMQ_ERROR_NONE);
+    }
+}
 
-    return 0;
+void on_signal(const int signo __attribute__((unused)))
+{
+    on_exit();
 }
