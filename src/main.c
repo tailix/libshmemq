@@ -125,6 +125,18 @@ void shmemq_init(
         return;
     }
 
+    if (sem_init(&shmemq->buffer->header.read_sem, 1, 0) != 0) {
+        shm_unlink(shmemq->name);
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_SEM_INIT;
+        return;
+    }
+
+    if (sem_init(&shmemq->buffer->header.write_sem, 1, 0) != 0) {
+        shm_unlink(shmemq->name);
+        if (error_ptr) *error_ptr = SHMEMQ_ERROR_FAILED_SEM_INIT;
+        return;
+    }
+
     // We don't really need this condition, but it is useful in tests
     // for platform sanity check and maybe we can use it to prevent race
     // condition.

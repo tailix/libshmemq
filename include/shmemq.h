@@ -1,6 +1,7 @@
 #ifndef SHMEMQ_INCLUDED
 #define SHMEMQ_INCLUDED 1
 
+#include <semaphore.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -44,6 +45,7 @@ typedef enum ShmemqError {
     SHMEMQ_ERROR_FAILED_MUNMAP     = 104,
     SHMEMQ_ERROR_FAILED_CLOSE      = 105,
     SHMEMQ_ERROR_FAILED_SHM_UNLINK = 106,
+    SHMEMQ_ERROR_FAILED_SEM_INIT   = 107,
 } ShmemqError;
 
 struct ShmemqFrameHeader {
@@ -60,6 +62,8 @@ struct ShmemqBufferHeader {
     size_t frames_count;
     size_t read_frame_index;
     size_t write_frame_index;
+    sem_t read_sem;
+    sem_t write_sem;
 };
 
 struct ShmemqBuffer {
