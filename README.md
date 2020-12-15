@@ -25,3 +25,4 @@ External links
 * [Building a shared memory IPC implementation – Part I](https://coherent-labs.com/posts/building-a-shared-memory-ipc-implementation-part-i/)
 * [Single-Producer/Single-Consumer Queue](https://software.intel.com/content/www/us/en/develop/articles/single-producer-single-consumer-queue.html)
 * [Which takes longer time? Switching between the user & kernel modes or switching between two processes?](https://stackoverflow.com/a/14205346)
+* [What happens the most, context switches or mode switches?](https://unix.stackexchange.com/a/15537)
