@@ -257,6 +257,7 @@ ShmemqFrame shmemq_pop_start(const Shmemq shmemq)
         return high_frame;
     }
 
+    shmemq->buffer->header.read_frame_index = 0;
     return low_frame;
 }
 

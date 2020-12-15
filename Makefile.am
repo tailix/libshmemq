@@ -15,7 +15,8 @@ TESTS = \
 	tests/test_prod_jumps_to_buffer_start_and_pushes_too_long_message \
 	tests/test_prod_jumps_to_buffer_start_and_reaches_cons \
 	tests/test_prod_pushes_too_long_message \
-	tests/test_prod_reaches_buffer_end
+	tests/test_prod_reaches_buffer_end \
+	tests/test_push_and_pop_one_frame_messages_without_jump
 
 noinst_PROGRAMS = \
 	$(TESTS) \
@@ -59,3 +60,7 @@ tests_test_prod_pushes_too_long_message_SOURCES = \
 tests_test_prod_reaches_buffer_end_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	tests/test_prod_reaches_buffer_end.c
+
+tests_test_push_and_pop_one_frame_messages_without_jump_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	tests/test_push_and_pop_one_frame_messages_without_jump.c

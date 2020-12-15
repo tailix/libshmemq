@@ -43,3 +43,4 @@
 /tests/test_prod_jumps_to_buffer_start_and_reaches_cons
 /tests/test_prod_pushes_too_long_message
 /tests/test_prod_reaches_buffer_end
+/tests/test_push_and_pop_one_frame_messages_without_jump
