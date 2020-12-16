@@ -15,6 +15,7 @@ Table of contents
 * [Links](#links)
   * [Similar implementations](#similar-implementations)
   * [Implementation theory](#implementation-theory)
+  * [Shared memory and other IPC theory](#shared-memory-and-other-ipc-theory)
   * [Cost theory](#cost-theory)
 
 
@@ -32,6 +33,10 @@ Links
 
 * [Building a shared memory IPC implementation – Part I](https://coherent-labs.com/posts/building-a-shared-memory-ipc-implementation-part-i/)
 * [Single-Producer/Single-Consumer Queue](https://software.intel.com/content/www/us/en/develop/articles/single-producer-single-consumer-queue.html)
+
+### Shared memory and other IPC theory
+
+* [Разделяемая память. Семафоры.](https://youtu.be/g_qco-EJqDM)
 
 ### Cost theory
 
