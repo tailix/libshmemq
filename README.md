@@ -36,6 +36,7 @@ Links
 
 ### Shared memory and other IPC theory
 
+* [What are primitives for the fastest user-space IPC?](https://forum.osdev.org/viewtopic.php?f=1&t=38693)
 * [Разделяемая память. Семафоры.](https://youtu.be/g_qco-EJqDM)
 
 ### Cost theory
