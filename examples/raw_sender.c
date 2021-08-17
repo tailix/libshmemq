@@ -88,6 +88,8 @@ int main()
     }
 
 finalize:
+    if (shmemq_error != SHMEMQ_ERROR_NONE) printf("Error: %u.\n", shmemq_error);
+
     printf("Destroy queue.\n");
 
     SHMEMQ_DELETE(shmemq, NULL);
