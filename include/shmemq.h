@@ -78,6 +78,8 @@ typedef struct Shmemq {
     struct ShmemqBuffer *buffer;
 } *Shmemq;
 
+const char *shmemq_error_str(ShmemqError error);
+
 Shmemq shmemq_new(const char *name, bool is_consumer, ShmemqError *error_ptr);
 
 void shmemq_init(

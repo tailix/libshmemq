@@ -69,7 +69,11 @@ int main()
         shmemq_pop_end(shmemq, &shmemq_error);
 
         if (shmemq_error != SHMEMQ_ERROR_NONE) {
-            printf("Error: %u.\n", shmemq_error);
+            printf(
+                "Error: %u (SHMEMQ_ERROR_%s).\n",
+                shmemq_error,
+                shmemq_error_str(shmemq_error)
+            );
             break;
         }
     }

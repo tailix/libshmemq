@@ -9,6 +9,40 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+const char *shmemq_error_str(const ShmemqError error)
+{
+    switch (error) {
+    case SHMEMQ_ERROR_NONE:
+        return "NONE";
+    case SHMEMQ_ERROR_INVALID_NAME:
+        return "INVALID_NAME";
+    case SHMEMQ_ERROR_BUG_POP_END_ON_EMPTY_QUEUE:
+        return "BUG_POP_END_ON_EMPTY_QUEUE";
+    case SHMEMQ_ERROR_BUG_PUSH_END_ON_FULL_QUEUE:
+        return "BUG_PUSH_END_ON_FULL_QUEUE";
+    case SHMEMQ_ERROR_BUG_PUSH_END_OVERFLOW:
+        return "BUG_PUSH_END_OVERFLOW";
+    case SHMEMQ_ERROR_FAILED_MALLOC:
+        return "FAILED_MALLOC";
+    case SHMEMQ_ERROR_FAILED_SHM_OPEN:
+        return "FAILED_SHM_OPEN";
+    case SHMEMQ_ERROR_FAILED_FTRUNCATE:
+        return "FAILED_FTRUNCATE";
+    case SHMEMQ_ERROR_FAILED_MMAP:
+        return "FAILED_MMAP";
+    case SHMEMQ_ERROR_FAILED_MUNMAP:
+        return "FAILED_MUNMAP";
+    case SHMEMQ_ERROR_FAILED_CLOSE:
+        return "FAILED_CLOSE";
+    case SHMEMQ_ERROR_FAILED_SHM_UNLINK:
+        return "FAILED_SHM_UNLINK";
+    case SHMEMQ_ERROR_FAILED_SEM_INIT:
+        return "FAILED_SEM_INIT";
+    default:
+        return "UNKNOWN";
+    }
+}
+
 void shmemq_delete(const Shmemq shmemq, ShmemqError *const error_ptr)
 {
     shmemq_finish(shmemq, error_ptr);

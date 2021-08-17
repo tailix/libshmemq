@@ -12,6 +12,7 @@ TESTS = \
 	tests/test_alternatively_push_and_pop_one_frame_messages_with_jump \
 	tests/test_cons_pops_buffer_start \
 	tests/test_cons_reaches_queue_end \
+	tests/test_error_str \
 	tests/test_fork \
 	tests/test_main \
 	tests/test_prod_jumps_to_buffer_start_and_pushes_too_long_message \
@@ -46,6 +47,10 @@ tests_test_cons_pops_buffer_start_SOURCES = \
 tests_test_cons_reaches_queue_end_SOURCES = \
 	$(libshmemq_a_SOURCES) \
 	tests/test_cons_reaches_queue_end.c
+
+tests_test_error_str_SOURCES = \
+	$(libshmemq_a_SOURCES) \
+	tests/test_error_str.c
 
 tests_test_fork_SOURCES = \
 	$(libshmemq_a_SOURCES) \
