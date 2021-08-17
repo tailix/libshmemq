@@ -25,6 +25,7 @@ Links
 
 ### Similar implementations
 
+* [Boost Lock-free](https://www.boost.org/doc/libs/1_77_0/doc/html/lockfree.html)
 * [goldshtn/shmemq-blog](https://github.com/goldshtn/shmemq-blog)
 * [MengRao/SPSC_Queue](https://github.com/MengRao/SPSC_Queue)
 * [ezhang887/shmemq](https://github.com/ezhang887/shmemq)
