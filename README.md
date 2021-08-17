@@ -33,6 +33,7 @@ Links
 
 * [Building a shared memory IPC implementation – Part I](https://coherent-labs.com/posts/building-a-shared-memory-ipc-implementation-part-i/)
 * [Single-Producer/Single-Consumer Queue](https://software.intel.com/content/www/us/en/develop/articles/single-producer-single-consumer-queue.html)
+* [A lock-free, cache-efficient shared ring buffer for multi-core architectures](https://www.researchgate.net/publication/221046035_A_lock-free_cache-efficient_shared_ring_buffer_for_multi-core_architectures)
 
 ### Shared memory and other IPC theory
 
